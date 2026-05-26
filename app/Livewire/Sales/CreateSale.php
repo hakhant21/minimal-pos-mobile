@@ -13,6 +13,7 @@ class CreateSale extends Component
     {
         $this->normalizeCartItems();
     }
+
     #[Rule('required|integer|min:1')]
     public ?int $selectedProductId = null;
 
@@ -42,6 +43,12 @@ class CreateSale extends Component
     public function updatedProductSearch()
     {
         $this->showProductDropdown = true;
+    }
+
+    public function updatedSelectedProductId(): void
+    {
+        $this->selectedUnitId = null;
+        $this->loadProductUnits();
     }
 
     public function selectProduct($productId)
@@ -180,6 +187,8 @@ class CreateSale extends Component
             $this->cart[$index]['quantity'] = (int) ($item['quantity'] ?? 0);
             $this->cart[$index]['unit_price'] = (float) ($item['unit_price'] ?? 0);
             $this->cart[$index]['subtotal'] = (float) ($item['subtotal'] ?? 0);
+            $this->cart[$index]['product_name'] = (string) ($item['product_name'] ?? '');
+            $this->cart[$index]['unit_name'] = (string) ($item['unit_name'] ?? '');
             $this->cart[$index]['product_id'] = (int) ($item['product_id'] ?? 0);
             $this->cart[$index]['unit_id'] = (int) ($item['unit_id'] ?? 0);
         }

@@ -82,6 +82,7 @@ class Instock extends Component
         if ($this->unit_id && $this->product) {
             return $this->product->units->find($this->unit_id);
         }
+
         return null;
     }
 
@@ -91,7 +92,7 @@ class Instock extends Component
         $productsQuery = Product::with('units', 'category')->orderBy('name');
 
         if (! empty($this->productSearch)) {
-            $productsQuery->where('name', 'like', '%' . $this->productSearch . '%');
+            $productsQuery->where('name', 'like', '%'.$this->productSearch.'%');
         }
 
         return view('livewire.inventory.instock', [

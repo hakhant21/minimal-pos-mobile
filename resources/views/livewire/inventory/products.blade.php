@@ -54,158 +54,183 @@
     </div>
     @endif
 
+    @php
+        $isUnitMode = !is_null($createdProductId);
+    @endphp
+
     @if ($showForm)
     <div
         class="rounded-xl border border-gray-200/80 bg-white p-5 shadow-sm dark:border-gray-700/80 dark:bg-gray-800/80">
-        <form wire:submit="save" class="space-y-4">
-            <div>
-                <label for="category_id"
-                    class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
-                <select wire:model="category_id" id="category_id"
-                    class="mt-1.5 block w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm shadow-sm transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-emerald-500">
-                    <option value="">Select category</option>
-                    @foreach ($categories as $category)
-                    <option value="{{ $category->id }}">{{ $category->name }}</option>
-                    @endforeach
-                </select>
-                @error('category_id')
-                <p class="mt-1.5 text-xs font-medium text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
+        <form class="space-y-4">
+            @if ($isUnitMode)
+                {{-- Unit form after product creation --}}
+                <div class="rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300">
+                    Product <strong>{{ $name }}</strong> created. Add units below.
+                </div>
 
-            <div>
-                <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Product
-                    Name</label>
-                <input wire:model="name" type="text" id="name"
-                    class="mt-1.5 block w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm shadow-sm transition placeholder:text-gray-400 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-emerald-500"
-                    placeholder="Product name">
-                @error('name')
-                <p class="mt-1.5 text-xs font-medium text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
+                <div class="border-t border-gray-200 pt-4 dark:border-gray-700">
+                    <label class="mb-3 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Unit <span class="text-red-500">*</span>
+                    </label>
 
-            <div>
-                <label for="description"
-                    class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
-                <textarea wire:model="description" id="description" rows="2"
-                    class="mt-1.5 block w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm shadow-sm transition placeholder:text-gray-400 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-emerald-500"
-                    placeholder="Optional description"></textarea>
-                @error('description')
-                <p class="mt-1.5 text-xs font-medium text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div>
-                <label for="stock" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Initial
-                    Stock</label>
-                <input wire:model="stock" type="number" min="0" id="stock"
-                    class="mt-1.5 block w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm shadow-sm transition placeholder:text-gray-400 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-emerald-500"
-                    placeholder="0">
-                @error('stock')
-                <p class="mt-1.5 text-xs font-medium text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
-
-            {{-- Units Management Section --}}
-            <div class="border-t border-gray-200 pt-4 dark:border-gray-700">
-                <label class="mb-3 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Product Units <span class="text-red-500">*</span>
-                </label>
-
-                {{-- Add/Edit Unit Form --}}
-                <div class="mb-4 rounded-lg bg-gray-50 p-3 dark:bg-gray-700/50">
-                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-4">
-                        <div class="sm:col-span-2">
+                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Unit Name</label>
                             <input wire:model="unitName" type="text"
-                                class="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-                                placeholder="Unit name (e.g., Piece, Box, Set)">
+                                class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                                placeholder="e.g., Bottle, Case, Can">
                             @error('unitName')
                             <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
                         <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Quantity</label>
                             <input wire:model="unitQuantity" type="number" min="1"
-                                class="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-                                placeholder="Quantity">
+                                class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                                placeholder="Qty">
                             @error('unitQuantity')
                             <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
                         <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Price</label>
                             <input wire:model="unitPrice" type="number" step="0.01" min="0"
-                                class="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                                class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                                 placeholder="Price">
                             @error('unitPrice')
                             <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
-                    <div class="mt-3 flex gap-2">
-                        <button type="button" wire:click="addUnit"
-                            class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700">
-                            {{ $editingUnitIndex !== null ? 'Update Unit' : 'Add Unit' }}
-                        </button>
-                        @if($editingUnitIndex !== null)
-                        <button type="button" wire:click="cancelEditUnit"
-                            class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300">
-                            Cancel Edit
-                        </button>
-                        @endif
-                    </div>
                 </div>
 
-                {{-- Units List --}}
-                @if(count($units) > 0)
-                <div class="space-y-2">
-                    @foreach($units as $index => $unit)
-                    <div
-                        class="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-600 dark:bg-gray-800">
-                        <div class="flex-1">
-                            <div class="flex items-center gap-2">
-                                <span class="font-medium text-gray-900 dark:text-white">{{ $unit['name'] }}</span>
-                                <span class="text-xs text-gray-500 dark:text-gray-400">|</span>
-                                <span class="text-sm text-gray-600 dark:text-gray-300">Qty: {{ $unit['quantity']
-                                    }}</span>
-                                <span class="text-xs text-gray-500 dark:text-gray-400">|</span>
-                                <span class="text-sm text-gray-600 dark:text-gray-300">Price: ${{
-                                    number_format($unit['price'], 2) }}</span>
-                            </div>
+                @if (count($createdProductUnits ?? []))
+                <div class="border-t border-gray-200 pt-4 dark:border-gray-700">
+                    <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Added Units ({{ count($createdProductUnits ?? []) }})
+                    </label>
+                    <div class="space-y-1.5">
+                        @foreach ($createdProductUnits as $unit)
+                        <div class="flex items-center gap-3 rounded-lg bg-gray-50 px-3 py-2 text-sm dark:bg-gray-700/50">
+                            <span class="font-medium text-gray-900 dark:text-white">{{ $unit['name'] }}</span>
+                            <span class="text-gray-500 dark:text-gray-400">Qty: {{ $unit['quantity'] }}</span>
+                            <span class="ml-auto font-mono text-emerald-600 dark:text-emerald-400">${{ number_format($unit['price'], 2) }}</span>
                         </div>
-                        <div class="flex gap-1">
-                            <button type="button" wire:click="editUnit({{ $index }})"
-                                class="rounded-lg p-1.5 text-gray-400 transition hover:bg-gray-100 hover:text-emerald-600 dark:hover:bg-gray-700">
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                </svg>
-                            </button>
-                            <button type="button" wire:click="removeUnit({{ $index }})"
-                                class="rounded-lg p-1.5 text-gray-400 transition hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20">
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>
-                            </button>
-                        </div>
+                        @endforeach
                     </div>
-                    @endforeach
                 </div>
-                @else
-                <p class="text-sm text-yellow-600 dark:text-yellow-400">⚠️ No units added yet. Add at least one unit for
-                    this product.</p>
                 @endif
-            </div>
 
-            <div class="flex gap-3 pt-1">
-                <button type="submit"
-                    class="flex-1 rounded-xl bg-linear-to-r from-emerald-600 to-emerald-700 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition-all hover:from-emerald-700 hover:to-emerald-800 active:scale-[0.98]">
-                    {{ $editingProductId ? 'Update' : 'Create' }}
-                </button>
-                <button type="button" wire:click="cancel"
-                    class="flex-1 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
-                    Cancel
-                </button>
-            </div>
+                <div class="flex gap-3 pt-1">
+                    <button type="button" wire:click="saveUnit"
+                        class="flex-1 rounded-xl bg-linear-to-r from-emerald-600 to-emerald-700 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition-all hover:from-emerald-700 hover:to-emerald-800 active:scale-[0.98]">
+                        Add Unit
+                    </button>
+                    <button type="button" wire:click="finish"
+                        class="flex-1 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                        Done
+                    </button>
+                </div>
+            @else
+                {{-- Product fields (create & edit) --}}
+                <div>
+                    <label for="category_id"
+                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
+                    <select wire:model="category_id" id="category_id"
+                        class="mt-1.5 block w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm shadow-sm transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-emerald-500">
+                        <option value="">Select category</option>
+                        @foreach ($categories as $category)
+                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('category_id')
+                    <p class="mt-1.5 text-xs font-medium text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Product
+                        Name</label>
+                    <input wire:model="name" type="text" id="name"
+                        class="mt-1.5 block w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm shadow-sm transition placeholder:text-gray-400 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-emerald-500"
+                        placeholder="Product name">
+                    @error('name')
+                    <p class="mt-1.5 text-xs font-medium text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="description"
+                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
+                    <textarea wire:model="description" id="description" rows="2"
+                        class="mt-1.5 block w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm shadow-sm transition placeholder:text-gray-400 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-emerald-500"
+                        placeholder="Optional description"></textarea>
+                    @error('description')
+                    <p class="mt-1.5 text-xs font-medium text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="stock" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Initial
+                        Stock</label>
+                    <input wire:model="stock" type="number" min="0" id="stock"
+                        class="mt-1.5 block w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm shadow-sm transition placeholder:text-gray-400 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-emerald-500"
+                        placeholder="0">
+                    @error('stock')
+                    <p class="mt-1.5 text-xs font-medium text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                @if ($editingProductId)
+                {{-- Unit fields (edit mode) --}}
+                <div class="border-t border-gray-200 pt-4 dark:border-gray-700">
+                    <label class="mb-3 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Unit <span class="text-red-500">*</span>
+                    </label>
+
+                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Unit Name</label>
+                            <input wire:model="unitName" type="text"
+                                class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                                placeholder="e.g., Bottle, Case, Can">
+                            @error('unitName')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Quantity</label>
+                            <input wire:model="unitQuantity" type="number" min="1"
+                                class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                                placeholder="Qty">
+                            @error('unitQuantity')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Price</label>
+                            <input wire:model="unitPrice" type="number" step="0.01" min="0"
+                                class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                                placeholder="Price">
+                            @error('unitPrice')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                <div class="flex gap-3 pt-1">
+                    <button type="button" wire:click="save"
+                        class="flex-1 rounded-xl bg-linear-to-r from-emerald-600 to-emerald-700 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition-all hover:from-emerald-700 hover:to-emerald-800 active:scale-[0.98]">
+                        {{ $editingProductId ? 'Update' : 'Create' }}
+                    </button>
+                    <button type="button" wire:click="cancel"
+                        class="flex-1 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                        Cancel
+                    </button>
+                </div>
+            @endif
         </form>
     </div>
     @endif

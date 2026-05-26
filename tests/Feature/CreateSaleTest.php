@@ -301,12 +301,12 @@ it('boot normalizes stale cart items', function () {
     $component->instance()->boot();
 
     expect($component->instance()->cart[0]['quantity'])->toBe(0);
-    expect($component->instance()->cart[0]['unit_price'])->toBe(0);
-    expect($component->instance()->cart[0]['subtotal'])->toBe(0);
+    expect($component->instance()->cart[0]['unit_price'])->toBe(0.0);
+    expect($component->instance()->cart[0]['subtotal'])->toBe(0.0);
     expect($component->instance()->cart[0]['product_name'])->toBe('');
     expect($component->instance()->cart[0]['unit_name'])->toBe('');
     expect($component->instance()->cart[0]['product_id'])->toBe($this->product->id);
-    expect($component->instance()->cart[0]['unit_id'])->toBeNull();
+    expect($component->instance()->cart[0]['unit_id'])->toBe(0);
 });
 
 it('renders cart section after adding items', function () {

@@ -66,7 +66,7 @@ class Units extends Component
         $baseSku = "{$categoryPrefix}-{$productPrefix}-{$unitPrefix}";
 
         $count = Unit::where('product_id', $this->product_id)
-            ->where('sku', 'like', $baseSku . '%')
+            ->where('sku', 'like', $baseSku.'%')
             ->count();
         $number = str_pad((string) ($count + 1), 3, '0', STR_PAD_LEFT);
 
@@ -140,6 +140,7 @@ class Units extends Component
         if ($unit->sale_items_count > 0) {
             session()->flash('error', 'Cannot delete unit with existing sale records.');
             $this->deletingUnitId = null;
+
             return;
         }
 
@@ -189,19 +190,19 @@ class Units extends Component
         $productsQuery = Product::with('category')->orderBy('name');
 
         if (! empty($this->productSearch)) {
-            $productsQuery->where('name', 'like', '%' . $this->productSearch . '%');
+            $productsQuery->where('name', 'like', '%'.$this->productSearch.'%');
         }
 
         $products = Product::with(['units' => function ($query) {
             $query->orderBy('name');
         }])->withCount('units');
 
-        if (!empty($this->search)) {
+        if (! empty($this->search)) {
             $products->where(function ($query) {
-                $query->where('name', 'like', '%' . $this->search . '%')
+                $query->where('name', 'like', '%'.$this->search.'%')
                     ->orWhereHas('units', function ($q) {
-                        $q->where('name', 'like', '%' . $this->search . '%')
-                            ->orWhere('sku', 'like', '%' . $this->search . '%');
+                        $q->where('name', 'like', '%'.$this->search.'%')
+                            ->orWhere('sku', 'like', '%'.$this->search.'%');
                     });
             });
         }
