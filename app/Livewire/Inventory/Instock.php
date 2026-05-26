@@ -18,6 +18,8 @@ class Instock extends Component
     #[Rule('required|integer|min:1')]
     public ?int $quantity = null;
 
+    public ?float $purchaseCost = null;
+
     public int $perPage = 10;
 
     public ?Product $product = null;
@@ -37,23 +39,31 @@ class Instock extends Component
 
         if ($this->product) {
             $this->productSearch = $this->product->name;
-            // Auto-select the first unit if available
             if ($this->product->units->isNotEmpty()) {
-                $this->unit_id = $this->product->units->first()->id;
+                $firstUnit = $this->product->units->first();
+                $this->unit_id = $firstUnit->id;
+                $this->purchaseCost = $firstUnit->cost_price;
             }
         }
     }
 
     public function updatedUnitId(): void
     {
-        // No need for separate selectedUnit variable, we can get it from product->units
+        if ($this->product && $this->unit_id) {
+            $unit = $this->product->units->find($this->unit_id);
+            if ($unit) {
+                $this->purchaseCost = $unit->cost_price;
+            }
+        }
     }
 
     public function updatedProductId(): void
     {
         $this->product = Product::with('units')->find($this->product_id);
         if ($this->product && $this->product->units->isNotEmpty()) {
-            $this->unit_id = $this->product->units->first()->id;
+            $firstUnit = $this->product->units->first();
+            $this->unit_id = $firstUnit->id;
+            $this->purchaseCost = $firstUnit->cost_price;
         }
     }
 
@@ -69,10 +79,19 @@ class Instock extends Component
         $product = Product::findOrFail($this->product_id);
         $unit = Unit::findOrFail($this->unit_id);
 
-        // Add stock logic
         $product->increment('stock', $this->quantity);
 
-        $this->reset(['product_id', 'unit_id', 'quantity', 'product', 'productSearch']);
+        if ($this->purchaseCost > 0) {
+            if ($unit->cost_price) {
+                $totalQty = $unit->quantity + $this->quantity;
+                $totalCost = ($unit->cost_price * $unit->quantity) + ($this->purchaseCost * $this->quantity);
+                $unit->update(['cost_price' => round($totalCost / $totalQty, 2)]);
+            } else {
+                $unit->update(['cost_price' => $this->purchaseCost]);
+            }
+        }
+
+        $this->reset(['product_id', 'unit_id', 'quantity', 'product', 'productSearch', 'purchaseCost']);
 
         session()->flash('message', "Added {$this->quantity} {$unit->name}(s) to {$product->name} stock successfully.");
     }

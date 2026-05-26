@@ -111,10 +111,13 @@
                     </label>
                     <div class="space-y-1.5">
                         @foreach ($createdProductUnits as $unit)
-                        <div class="flex items-center gap-3 rounded-lg bg-gray-50 px-3 py-2 text-sm dark:bg-gray-700/50">
+                         <div class="flex items-center gap-3 rounded-lg bg-gray-50 px-3 py-2 text-sm dark:bg-gray-700/50">
                             <span class="font-medium text-gray-900 dark:text-white">{{ $unit['name'] }}</span>
                             <span class="text-gray-500 dark:text-gray-400">Qty: {{ $unit['quantity'] }}</span>
-                            <span class="ml-auto font-mono text-emerald-600 dark:text-emerald-400">${{ number_format($unit['price'], 2) }}</span>
+                            <span class="font-mono text-emerald-600 dark:text-emerald-400">${{ number_format($unit['price'], 2) }}</span>
+                            @if (!empty($unit['cost_price']))
+                            <span class="font-mono text-gray-400">Cost: ${{ number_format($unit['cost_price'], 2) }}</span>
+                            @endif
                         </div>
                         @endforeach
                     </div>
@@ -188,7 +191,7 @@
                         Unit <span class="text-red-500">*</span>
                     </label>
 
-                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Unit Name</label>
                             <input wire:model="unitName" type="text"
@@ -208,7 +211,7 @@
                             @enderror
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Price</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Sell Price</label>
                             <input wire:model="unitPrice" type="number" step="0.01" min="0"
                                 class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                                 placeholder="Price">
@@ -216,9 +219,64 @@
                             <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Cost Price</label>
+                            <input wire:model="unitCostPrice" type="number" step="0.01" min="0"
+                                class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                                placeholder="Cost">
+                            @error('unitCostPrice')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
-                </div>
-                @endif
+
+                    @if ($editingProductId)
+                    {{-- Unit fields (edit mode) --}}
+                    <div class="border-t border-gray-200 pt-4 dark:border-gray-700">
+                        <label class="mb-3 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Unit <span class="text-red-500">*</span>
+                        </label>
+
+                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Unit Name</label>
+                                <input wire:model="unitName" type="text"
+                                    class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                                    placeholder="e.g., Bottle, Case, Can">
+                                @error('unitName')
+                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Quantity</label>
+                                <input wire:model="unitQuantity" type="number" min="1"
+                                    class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                                    placeholder="Qty">
+                                @error('unitQuantity')
+                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Sell Price</label>
+                                <input wire:model="unitPrice" type="number" step="0.01" min="0"
+                                    class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                                    placeholder="Price">
+                                @error('unitPrice')
+                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Cost Price</label>
+                                <input wire:model="unitCostPrice" type="number" step="0.01" min="0"
+                                    class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                                    placeholder="Cost">
+                                @error('unitCostPrice')
+                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    @endif
 
                 <div class="flex gap-3 pt-1">
                     <button type="button" wire:click="save"

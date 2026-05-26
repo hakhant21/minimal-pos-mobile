@@ -173,6 +173,15 @@
                     @error('quantity') <p class="mt-1.5 text-xs font-medium text-red-600">{{ $message }}</p> @enderror
                 </div>
 
+                <div>
+                    <label for="purchaseCost"
+                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Purchase Cost (per unit)</label>
+                    <input wire:model="purchaseCost" type="number" step="0.01" min="0" id="purchaseCost"
+                        class="mt-1.5 block w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm shadow-sm transition placeholder:text-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-blue-500"
+                        placeholder="e.g. 0.80">
+                    @error('purchaseCost') <p class="mt-1.5 text-xs font-medium text-red-600">{{ $message }}</p> @enderror
+                </div>
+
                 @if($unit_id && $product && $quantity)
                 @php
                 $selectedUnit = $product->units->find($unit_id);

@@ -18,6 +18,7 @@ class Unit extends Model
         'name',
         'quantity',
         'price',
+        'cost_price',
         'sku',
     ];
 
@@ -26,6 +27,7 @@ class Unit extends Model
         return [
             'quantity' => 'integer',
             'price' => 'decimal:2',
+            'cost_price' => 'decimal:2',
         ];
     }
 

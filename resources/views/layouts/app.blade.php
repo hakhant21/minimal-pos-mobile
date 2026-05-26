@@ -88,6 +88,16 @@
                                 icon="history">
                                 History
                             </x-nav-link>
+                            <hr class="my-4 border-gray-200 dark:border-gray-800">
+
+                            <p
+                                class="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+                                Reports</p>
+
+                            <x-nav-link href="{{ route('reports.profit-loss') }}"
+                                :active="request()->routeIs('reports.profit-loss')" icon="chart">
+                                Profit & Loss
+                            </x-nav-link>
                         </nav>
                     </div>
                 </div>

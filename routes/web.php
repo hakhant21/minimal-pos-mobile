@@ -29,3 +29,7 @@ Route::get('/sales', function () {
 Route::get('/history', function () {
     return view('pages.history');
 })->name('history');
+
+Route::get('/reports/profit-loss', function () {
+    return view('pages.reports.profit-loss');
+})->name('reports.profit-loss');

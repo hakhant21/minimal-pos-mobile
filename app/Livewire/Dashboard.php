@@ -25,6 +25,14 @@ class Dashboard extends Component
         $todaySales = Sale::whereDate('created_at', today())->count();
         $todayRevenue = Sale::whereDate('created_at', today())->sum('total_amount');
 
+        $inventoryValue = Product::join('units', 'products.id', '=', 'units.product_id')
+            ->whereNotNull('units.cost_price')
+            ->where('units.cost_price', '>', 0)
+            ->selectRaw('products.id, products.stock, MIN(units.cost_price / NULLIF(units.quantity, 0)) as min_cost_per_item')
+            ->groupBy('products.id', 'products.stock')
+            ->get()
+            ->sum(fn ($item) => $item->stock * $item->min_cost_per_item);
+
         $lowStockProducts = Product::with('category')
             ->where('stock', '<', 10)
             ->orderBy('stock')
@@ -42,6 +50,7 @@ class Dashboard extends Component
             'todaySales',
             'todayRevenue',
             'recentSales',
+            'inventoryValue',
         ));
     }
 }

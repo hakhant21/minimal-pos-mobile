@@ -42,6 +42,8 @@ class Products extends Component
 
     public float $unitPrice = 0;
 
+    public float $unitCostPrice = 0;
+
     public array $createdProductUnits = [];
 
     public function create(): void
@@ -66,6 +68,7 @@ class Products extends Component
             $this->unitName = $firstUnit->name;
             $this->unitQuantity = $firstUnit->quantity;
             $this->unitPrice = $firstUnit->price;
+            $this->unitCostPrice = $firstUnit->cost_price ?? 0;
         }
     }
 
@@ -82,6 +85,7 @@ class Products extends Component
             $rules['unitName'] = 'required|string|max:255';
             $rules['unitQuantity'] = 'required|integer|min:1';
             $rules['unitPrice'] = 'required|numeric|min:0';
+            $rules['unitCostPrice'] = 'nullable|numeric|min:0';
         }
 
         $this->validate($rules);
@@ -99,6 +103,7 @@ class Products extends Component
                 'name' => $this->unitName,
                 'quantity' => $this->unitQuantity,
                 'price' => $this->unitPrice,
+                'cost_price' => $this->unitCostPrice ?: null,
             ]);
 
             session()->flash('message', 'Product updated successfully.');
@@ -130,6 +135,7 @@ class Products extends Component
             'unitName' => 'required|string|max:255',
             'unitQuantity' => 'required|integer|min:1',
             'unitPrice' => 'required|numeric|min:0',
+            'unitCostPrice' => 'nullable|numeric|min:0',
         ]);
 
         $product = Product::findOrFail($this->createdProductId);
@@ -138,13 +144,15 @@ class Products extends Component
             'name' => $this->unitName,
             'quantity' => $this->unitQuantity,
             'price' => $this->unitPrice,
+            'cost_price' => $this->unitCostPrice ?: null,
         ]);
 
-        $this->createdProductUnits = $product->units()->get(['name', 'quantity', 'price', 'sku'])->toArray();
+        $this->createdProductUnits = $product->units()->get(['name', 'quantity', 'price', 'cost_price', 'sku'])->toArray();
 
         $this->unitName = '';
         $this->unitQuantity = 1;
         $this->unitPrice = 0;
+        $this->unitCostPrice = 0;
 
         session()->flash('message', 'Unit added successfully.');
     }
@@ -236,6 +244,7 @@ class Products extends Component
         $this->unitName = '';
         $this->unitQuantity = 1;
         $this->unitPrice = 0;
+        $this->unitCostPrice = 0;
     }
 
     public function render()
