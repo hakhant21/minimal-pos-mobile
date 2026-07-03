@@ -8,14 +8,14 @@
                         d="M4 6h16M4 10h16M4 14h16M4 18h16" />
                 </svg>
             </div>
-            <h2 class="text-xl font-bold text-gray-900 dark:text-white">Units</h2>
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ __('Units') }}</h2>
         </div>
         <button wire:click="create"
             class="inline-flex items-center gap-1.5 rounded-xl bg-linear-to-r from-amber-600 to-amber-700 px-3.5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-amber-600/20 transition-all hover:from-amber-700 hover:to-amber-800 hover:shadow-xl hover:shadow-amber-600/25 active:scale-[0.98]">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
-            New Unit
+            {{ __('New Unit') }}
         </button>
     </div>
 
@@ -26,7 +26,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
-        <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search products or units..."
+        <input type="text" wire:model.live.debounce.300ms="search" placeholder="{{ __('Search products or units...') }}"
             class="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm shadow-sm transition focus:border-amber-400 focus:ring-2 focus:ring-amber-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-amber-500">
     </div>
 
@@ -77,7 +77,7 @@
                                 </h3>
                                 <span
                                     class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-400">
-                                    {{ $product->units_count }} {{ Str::plural('unit', $product->units_count) }}
+                                    {{ $product->units_count }} {{ $product->units_count == 1 ? __('unit') : __('units') }}
                                 </span>
                             </div>
                             @if($product->category)
@@ -118,7 +118,7 @@
                                         }}</span>
                                 </div>
                                 <div class="mt-0.5 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                                    <span>Qty: {{ $unit->quantity }}</span>
+                                    <span>{{ __('Qty') }}: {{ $unit->quantity }}</span>
                                     <span>•</span>
                                     <span class="font-semibold text-amber-600 dark:text-amber-400">
                                         ${{ number_format($unit->price, 2) }}
@@ -147,7 +147,7 @@
                     </div>
                     @empty
                     <div class="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
-                        No units found for this product.
+                        {{ __('No units found for this product.') }}
                     </div>
                     @endforelse
 
@@ -159,7 +159,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 4v16m8-8H4" />
                             </svg>
-                            Add Unit to {{ $product->name }}
+                            {{ __('Add Unit to') }} {{ $product->name }}
                         </button>
                     </div>
                 </div>
@@ -176,9 +176,9 @@
             </svg>
             <p class="mt-3 text-sm font-medium text-gray-500 dark:text-gray-400">
                 @if(!empty($search))
-                No products or units found matching "{{ $search }}"
+                {{ __('No products or units found matching') }} "{{ $search }}"
                 @else
-                No products yet. Create a product first to add units.
+                {{ __('No products yet. Create a product first to add units.') }}
                 @endif
             </p>
         </div>
@@ -190,7 +190,7 @@
     <div class="flex justify-center pt-2">
         <button wire:click="loadMore" wire:loading.attr="disabled"
             class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-amber-500/20 disabled:opacity-50 disabled:cursor-not-allowed dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 sm:w-auto sm:px-6">
-            <span wire:loading.remove wire:target="loadMore">Load More Products</span>
+            <span wire:loading.remove wire:target="loadMore">{{ __('Load More Products') }}</span>
             <span wire:loading wire:target="loadMore" class="inline-flex items-center gap-2">
                 <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -198,7 +198,7 @@
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                     </path>
                 </svg>
-                Loading...
+                {{ __('Loading...') }}
             </span>
         </button>
     </div>
@@ -212,7 +212,7 @@
                 class="w-full max-w-md rounded-2xl border border-gray-200/80 bg-white p-5 shadow-xl dark:border-gray-700/80 dark:bg-gray-800/80">
                 <div class="mb-4 flex items-center justify-between">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                        {{ $editingUnitId ? 'Edit Unit' : 'New Unit' }}
+                        {{ $editingUnitId ? __('Edit Unit') : __('New Unit') }}
                     </h3>
                     <button wire:click="cancel"
                         class="rounded-lg p-1 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
@@ -225,9 +225,9 @@
 
                 <form wire:submit="save" class="space-y-4">
                     <div class="relative" x-data="{ open: false }" x-on:click.away="open = false">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Product</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('Product') }}</label>
                         <input type="text" wire:model.live="productSearch" x-on:focus="open = true"
-                            x-on:input="open = true" placeholder="Search product..."
+                            x-on:input="open = true" placeholder="{{ __('Search product...') }}"
                             class="w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm shadow-sm transition focus:border-amber-400 focus:ring-2 focus:ring-amber-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
                         <div x-show="open" x-transition
                             class="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto dark:bg-gray-800 dark:border-gray-700"
@@ -248,13 +248,13 @@
                             <div class="border-t p-2">
                                 <button wire:click="loadMoreProducts"
                                     class="w-full text-center text-xs text-amber-600 py-1.5">
-                                    Load more products...
+                                    {{ __('Load more products...') }}
                                 </button>
                             </div>
                             @endif
                             @else
                             <div class="px-4 py-2.5 text-center text-sm text-gray-500">
-                                No products found
+                                {{ __('No products found') }}
                             </div>
                             @endif
                         </div>
@@ -264,29 +264,27 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Unit
-                            Name</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('Unit Name') }}</label>
                         <input wire:model="name" type="text"
                             class="w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                            placeholder="e.g. Bottle, Case, Can">
+                            placeholder="{{ __('e.g. Bottle, Case, Can') }}">
                         @error('name')
                         <p class="mt-1.5 text-xs font-medium text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Quantity per
-                            Unit</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('Quantity per Unit') }}</label>
                         <input wire:model="quantity" type="number" min="1"
                             class="w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                            placeholder="e.g., 12 (for a case of 12)">
+                            placeholder="{{ __('e.g., 12 (for a case of 12)') }}">
                         @error('quantity')
                         <p class="mt-1.5 text-xs font-medium text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Price</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('Price') }}</label>
                         <input wire:model="price" type="number" step="0.01" min="0"
                             class="w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                             placeholder="0.00">
@@ -298,11 +296,11 @@
                     <div class="flex gap-3 pt-2">
                         <button type="submit"
                             class="flex-1 rounded-xl bg-linear-to-r from-amber-600 to-amber-700 px-4 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:from-amber-700 hover:to-amber-800 active:scale-[0.98]">
-                            {{ $editingUnitId ? 'Update' : 'Create' }}
+                            {{ $editingUnitId ? __('Update') : __('Create') }}
                         </button>
                         <button type="button" wire:click="cancel"
                             class="flex-1 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300">
-                            Cancel
+                            {{ __('Cancel') }}
                         </button>
                     </div>
                 </form>
@@ -324,9 +322,9 @@
                 </svg>
             </div>
             <div class="mt-4 text-center">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Delete Unit?</h3>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ __('Delete Unit?') }}</h3>
                 <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                    Units with sale records cannot be deleted. This action cannot be undone.
+                    {{ __('Units with sale records cannot be deleted. This action cannot be undone.') }}
                 </p>
             </div>
             <div class="mt-6 flex gap-3">
@@ -336,7 +334,7 @@
                 </button>
                 <button wire:click="delete"
                     class="flex-1 rounded-xl bg-linear-to-r from-red-600 to-red-700 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-red-600/20 transition-all hover:from-red-700 hover:to-red-800 active:scale-[0.98]">
-                    Delete
+                    {{ __('Delete') }}
                 </button>
             </div>
         </div>

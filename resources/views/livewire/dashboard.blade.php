@@ -16,8 +16,7 @@
                             d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16z" />
                     </svg>
                 </div>
-                <p class="mt-3 text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Today
-                    Sales</p>
+                    <p class="mt-3 text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">{{ __('Today Sales') }}</p>
                 <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-white">{{ $todaySales }}</p>
                 @if (isset($todayRevenue) && $todayRevenue > 0)
                 <p class="mt-0.5 text-xs font-medium text-amber-600 dark:text-amber-400">$
@@ -38,8 +37,7 @@
                             d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                     </svg>
                 </div>
-                <p class="mt-3 text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Total
-                    Stock</p>
+                    <p class="mt-3 text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">{{ __('Total Stock') }}</p>
                 <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-white">{{ number_format($totalStock) }}</p>
             </div>
         </div>
@@ -58,8 +56,7 @@
                             d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </div>
-                <p class="mt-3 text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Inventory
-                    Value</p>
+                    <p class="mt-3 text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">{{ __('Inventory Value') }}</p>
                 <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-white">
                     ${{ number_format($inventoryValue, 2) }}</p>
             </div>
@@ -80,8 +77,7 @@
                             d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </div>
-                <p class="mt-3 text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Today
-                    Revenue</p>
+                    <p class="mt-3 text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">{{ __('Today Revenue') }}</p>
                 <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-white">
                     ${{ number_format($todayRevenue, 2) }}</p>
             </div>
@@ -92,7 +88,7 @@
     <div
         class="overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-sm dark:border-gray-700/80 dark:bg-gray-800/80">
         <div class="border-b border-gray-100 px-4 py-3 dark:border-gray-700/50">
-            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Low Stock Products</h3>
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">{{ __('Low Stock Products') }}</h3>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
@@ -100,10 +96,10 @@
                     <tr class="border-b border-gray-100 dark:border-gray-800">
                         <th
                             class="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                            Product</th>
+                            {{ __('Product') }}</th>
                         <th
                             class="px-4 py-2 text-right text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                            Stock</th>
+                            {{ __('Stock') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
@@ -128,7 +124,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 9v2m0 4h.01" />
                             </svg>
-                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">All products are well stocked.</p>
+                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ __('All products are well stocked.') }}</p>
                         </td>
                     </tr>
                     @endforelse
@@ -141,7 +137,7 @@
     <div
         class="overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-sm dark:border-gray-700/80 dark:bg-gray-800/80">
         <div class="border-b border-gray-100 px-4 py-3 dark:border-gray-700/50">
-            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Recent Sales</h3>
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">{{ __('Recent Sales') }}</h3>
         </div>
         <div class="divide-y divide-gray-100 dark:divide-gray-800">
             @forelse ($recentSales as $sale)
@@ -187,12 +183,12 @@
                                 </p>
                                 <div class="flex items-center gap-2 mt-0.5">
                                     <span class="text-xs text-gray-500 dark:text-gray-400">
-                                        Qty: {{ $item->quantity }}
+                                        {{ __('Qty') }}: {{ $item->quantity }}
                                     </span>
                                     @if(isset($item->unit) && $item->unit)
                                     <span class="text-xs text-gray-400">•</span>
                                     <span class="text-xs text-gray-500 dark:text-gray-400">
-                                        Unit: {{ $item->unit->name }}
+                                        {{ __('Unit') }}: {{ $item->unit->name }}
                                     </span>
                                     @endif
                                 </div>
@@ -202,13 +198,13 @@
                                     ${{ number_format($item->subtotal, 2) }}
                                 </p>
                                 <p class="text-xs text-gray-400">
-                                    ${{ number_format($item->unit->price ?? 0, 2) }} / unit
+                                    ${{ number_format($item->unit->price ?? 0, 2) }} / {{ __('Unit') }}
                                 </p>
                             </div>
                         </div>
                         @empty
                         <div class="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
-                            No items found for this sale.
+                            {{ __('No items found for this sale.') }}
                         </div>
                         @endforelse
                     </div>
@@ -222,7 +218,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16z" />
                 </svg>
-                <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">No sales yet.</p>
+                <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ __('No sales yet.') }}</p>
             </div>
             @endforelse
         </div>

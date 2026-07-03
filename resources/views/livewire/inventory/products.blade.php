@@ -8,14 +8,14 @@
                         d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                 </svg>
             </div>
-            <h2 class="text-xl font-bold text-gray-900 dark:text-white">Products</h2>
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ __('Products') }}</h2>
         </div>
         <button wire:click="create"
             class="inline-flex items-center gap-1.5 rounded-xl bg-linear-to-r from-emerald-600 to-emerald-700 px-3.5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition-all hover:from-emerald-700 hover:to-emerald-800 hover:shadow-xl hover:shadow-emerald-600/25 active:scale-[0.98]">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
-            New Product
+            {{ __('New Product') }}
         </button>
     </div>
 
@@ -26,7 +26,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
-        <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search products..."
+        <input type="text" wire:model.live.debounce.300ms="search" placeholder="{{ __('Search products...') }}"
             class="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm shadow-sm transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-emerald-500">
     </div>
 
@@ -65,7 +65,7 @@
             @if ($isUnitMode)
                 {{-- Unit form after product creation --}}
                 <div class="rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300">
-                    Product <strong>{{ $name }}</strong> created. Add units below.
+                    <strong>{{ $name }}</strong> {{ __('created. Add units below.') }}
                 </div>
 
                 <div class="border-t border-gray-200 pt-4 dark:border-gray-700">
@@ -75,28 +75,28 @@
 
                     <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Unit Name</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Unit Name') }}</label>
                             <input wire:model="unitName" type="text"
                                 class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-                                placeholder="e.g., Bottle, Case, Can">
+                                placeholder="{{ __('e.g., Bottle, Case, Can') }}">
                             @error('unitName')
                             <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Quantity</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Quantity') }}</label>
                             <input wire:model="unitQuantity" type="number" min="1"
                                 class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-                                placeholder="Qty">
+                                placeholder="{{ __('Qty') }}">
                             @error('unitQuantity')
                             <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Price</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Price') }}</label>
                             <input wire:model="unitPrice" type="number" step="0.01" min="0"
                                 class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-                                placeholder="Price">
+                                placeholder="{{ __('Price') }}">
                             @error('unitPrice')
                             <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                             @enderror
@@ -107,16 +107,16 @@
                 @if (count($createdProductUnits ?? []))
                 <div class="border-t border-gray-200 pt-4 dark:border-gray-700">
                     <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Added Units ({{ count($createdProductUnits ?? []) }})
+                        {{ __('Added Units') }} ({{ count($createdProductUnits ?? []) }})
                     </label>
                     <div class="space-y-1.5">
                         @foreach ($createdProductUnits as $unit)
                          <div class="flex items-center gap-3 rounded-lg bg-gray-50 px-3 py-2 text-sm dark:bg-gray-700/50">
                             <span class="font-medium text-gray-900 dark:text-white">{{ $unit['name'] }}</span>
-                            <span class="text-gray-500 dark:text-gray-400">Qty: {{ $unit['quantity'] }}</span>
+                            <span class="text-gray-500 dark:text-gray-400">{{ __('Qty') }}: {{ $unit['quantity'] }}</span>
                             <span class="font-mono text-emerald-600 dark:text-emerald-400">${{ number_format($unit['price'], 2) }}</span>
                             @if (!empty($unit['cost_price']))
-                            <span class="font-mono text-gray-400">Cost: ${{ number_format($unit['cost_price'], 2) }}</span>
+                            <span class="font-mono text-gray-400">{{ __('Cost') }}: ${{ number_format($unit['cost_price'], 2) }}</span>
                             @endif
                         </div>
                         @endforeach
@@ -127,21 +127,21 @@
                 <div class="flex gap-3 pt-1">
                     <button type="button" wire:click="saveUnit"
                         class="flex-1 rounded-xl bg-linear-to-r from-emerald-600 to-emerald-700 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition-all hover:from-emerald-700 hover:to-emerald-800 active:scale-[0.98]">
-                        Add Unit
+                        {{ __('Add Unit') }}
                     </button>
                     <button type="button" wire:click="finish"
                         class="flex-1 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
-                        Done
+                        {{ __('Done') }}
                     </button>
                 </div>
             @else
                 {{-- Product fields (create & edit) --}}
                 <div>
                     <label for="category_id"
-                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
+                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Category') }}</label>
                     <select wire:model="category_id" id="category_id"
                         class="mt-1.5 block w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm shadow-sm transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-emerald-500">
-                        <option value="">Select category</option>
+                        <option value="">{{ __('Select category') }}</option>
                         @foreach ($categories as $category)
                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                         @endforeach
@@ -152,11 +152,10 @@
                 </div>
 
                 <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Product
-                        Name</label>
+                    <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">                        {{ __('Product Name') }}</label>
                     <input wire:model="name" type="text" id="name"
                         class="mt-1.5 block w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm shadow-sm transition placeholder:text-gray-400 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-emerald-500"
-                        placeholder="Product name">
+                        placeholder="{{ __('Product name') }}">
                     @error('name')
                     <p class="mt-1.5 text-xs font-medium text-red-600">{{ $message }}</p>
                     @enderror
@@ -164,18 +163,17 @@
 
                 <div>
                     <label for="description"
-                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
+                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Description') }}</label>
                     <textarea wire:model="description" id="description" rows="2"
                         class="mt-1.5 block w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm shadow-sm transition placeholder:text-gray-400 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-emerald-500"
-                        placeholder="Optional description"></textarea>
+                        placeholder="{{ __('Optional description') }}"></textarea>
                     @error('description')
                     <p class="mt-1.5 text-xs font-medium text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div>
-                    <label for="stock" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Initial
-                        Stock</label>
+                    <label for="stock" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Initial Stock') }}</label>
                     <input wire:model="stock" type="number" min="0" id="stock"
                         class="mt-1.5 block w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm shadow-sm transition placeholder:text-gray-400 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-emerald-500"
                         placeholder="0">
@@ -193,102 +191,55 @@
 
                     <div class="grid grid-cols-1 gap-3 sm:grid-cols-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Unit Name</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Unit Name') }}</label>
                             <input wire:model="unitName" type="text"
                                 class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-                                placeholder="e.g., Bottle, Case, Can">
+                                placeholder="{{ __('e.g., Bottle, Case, Can') }}">
                             @error('unitName')
                             <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Quantity</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Quantity') }}</label>
                             <input wire:model="unitQuantity" type="number" min="1"
                                 class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-                                placeholder="Qty">
+                                placeholder="{{ __('Qty') }}">
                             @error('unitQuantity')
                             <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Sell Price</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Sell Price') }}</label>
                             <input wire:model="unitPrice" type="number" step="0.01" min="0"
                                 class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-                                placeholder="Price">
+                                placeholder="{{ __('Price') }}">
                             @error('unitPrice')
                             <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Cost Price</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Cost Price') }}</label>
                             <input wire:model="unitCostPrice" type="number" step="0.01" min="0"
                                 class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-                                placeholder="Cost">
+                                placeholder="{{ __('Cost') }}">
                             @error('unitCostPrice')
                             <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
 
-                    @if ($editingProductId)
-                    {{-- Unit fields (edit mode) --}}
-                    <div class="border-t border-gray-200 pt-4 dark:border-gray-700">
-                        <label class="mb-3 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Unit <span class="text-red-500">*</span>
-                        </label>
-
-                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Unit Name</label>
-                                <input wire:model="unitName" type="text"
-                                    class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-                                    placeholder="e.g., Bottle, Case, Can">
-                                @error('unitName')
-                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Quantity</label>
-                                <input wire:model="unitQuantity" type="number" min="1"
-                                    class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-                                    placeholder="Qty">
-                                @error('unitQuantity')
-                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Sell Price</label>
-                                <input wire:model="unitPrice" type="number" step="0.01" min="0"
-                                    class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-                                    placeholder="Price">
-                                @error('unitPrice')
-                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Cost Price</label>
-                                <input wire:model="unitCostPrice" type="number" step="0.01" min="0"
-                                    class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-                                    placeholder="Cost">
-                                @error('unitCostPrice')
-                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
-                    @endif
-
                 <div class="flex gap-3 pt-1">
                     <button type="button" wire:click="save"
                         class="flex-1 rounded-xl bg-linear-to-r from-emerald-600 to-emerald-700 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-600/20 transition-all hover:from-emerald-700 hover:to-emerald-800 active:scale-[0.98]">
-                        {{ $editingProductId ? 'Update' : 'Create' }}
+                        {{ $editingProductId ? __('Update') : __('Create') }}
                     </button>
                     <button type="button" wire:click="cancel"
                         class="flex-1 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
-                        Cancel
+                        {{ __('Cancel') }}
                     </button>
                 </div>
             @endif
+        @endif
         </form>
     </div>
     @endif
@@ -352,11 +303,11 @@
                                 {{-- Tooltip --}}
                                 <div
                                     class="invisible absolute bottom-full left-1/2 mb-2 z-10 w-48 -translate-x-1/2 rounded-lg bg-gray-900 px-3 py-2 text-xs text-white opacity-0 transition group-hover/unit:visible group-hover/unit:opacity-100 dark:bg-gray-800">
-                                    <div class="font-medium">Unit Details</div>
+                                    <div class="font-medium">{{ __('Unit Details') }}</div>
                                     <div class="mt-1 space-y-0.5">
-                                        <div>SKU: {{ $unit->sku }}</div>
-                                        <div>Quantity: {{ $unit->quantity }}</div>
-                                        <div>Price: ${{ number_format($unit->price, 2) }}</div>
+                                        <div>{{ __('SKU') }}: {{ $unit->sku }}</div>
+                                        <div>{{ __('Quantity') }}: {{ $unit->quantity }}</div>
+                                        <div>{{ __('Price') }}: ${{ number_format($unit->price, 2) }}</div>
                                     </div>
                                     <div
                                         class="absolute left-1/2 top-full -translate-x-1/2 -translate-y-1 border-4 border-transparent border-t-gray-900 dark:border-t-gray-800">
@@ -405,7 +356,7 @@
                         </div>
 
                         <div class="text-[11px] text-gray-500 dark:text-gray-400">
-                            In Stock
+                            {{ __('In Stock') }}
                         </div>
                     </div>
 
@@ -415,7 +366,7 @@
                             {{ $product->units_count }}
                         </div>
                         <div class="text-[11px] text-gray-500 dark:text-gray-400">
-                            Units
+                            {{ __('Units') }}
                         </div>
                     </div>
 
@@ -433,9 +384,9 @@
 
             <p class="mt-4 text-sm font-medium text-gray-500 dark:text-gray-400">
                 @if(!empty($search))
-                No products found matching "{{ $search }}"
+                {{ __('No products found matching') }} "{{ $search }}"
                 @else
-                No products yet. Click "New Product" to get started.
+                {{ __('No products yet. Click "New Product" to get started.') }}
                 @endif
             </p>
         </div>
@@ -447,7 +398,7 @@
     <div class="flex justify-center pt-2">
         <button wire:click="loadMore" wire:loading.attr="disabled"
             class="inline-flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-6 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700">
-            <span wire:loading.remove wire:target="loadMore">Load More Products</span>
+            <span wire:loading.remove wire:target="loadMore">{{ __('Load More Products') }}</span>
             <span wire:loading wire:target="loadMore" class="inline-flex items-center gap-2">
                 <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -455,7 +406,7 @@
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                     </path>
                 </svg>
-                Loading...
+                {{ __('Loading...') }}
             </span>
         </button>
     </div>
@@ -474,20 +425,20 @@
                 </svg>
             </div>
             <div class="mt-4 text-center">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Delete Product?</h3>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ __('Delete Product?') }}</h3>
                 <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                    This will also delete all units under this product. This action cannot be undone.
+                    {{ __('This will also delete all units under this product. This action cannot be undone.') }}
                 </p>
             </div>
             <div class="mt-6 flex gap-3">
-                <button wire:click="cancelDelete"
-                    class="flex-1 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
-                    Cancel
-                </button>
-                <button wire:click="delete"
-                    class="flex-1 rounded-xl bg-linear-to-r from-red-600 to-red-700 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-red-600/20 transition-all hover:from-red-700 hover:to-red-800 active:scale-[0.98]">
-                    Delete
-                </button>
+                    <button wire:click="cancelDelete"
+                        class="flex-1 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                        {{ __('Cancel') }}
+                    </button>
+                    <button wire:click="delete"
+                        class="flex-1 rounded-xl bg-linear-to-r from-red-600 to-red-700 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-red-600/20 transition-all hover:from-red-700 hover:to-red-800 active:scale-[0.98]">
+                        {{ __('Delete') }}
+                    </button>
             </div>
         </div>
     </div>

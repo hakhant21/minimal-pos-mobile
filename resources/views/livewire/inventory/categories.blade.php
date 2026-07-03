@@ -8,14 +8,14 @@
                         d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                 </svg>
             </div>
-            <h2 class="text-xl font-bold text-gray-900 dark:text-white">Categories</h2>
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ __('Categories') }}</h2>
         </div>
         <button wire:click="create"
             class="inline-flex items-center gap-1.5 rounded-xl bg-linear-to-r from-indigo-600 to-indigo-700 px-3.5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/20 transition-all hover:from-indigo-700 hover:to-indigo-800 hover:shadow-xl hover:shadow-indigo-600/25 active:scale-[0.98]">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
-            New
+            {{ __('New') }}
         </button>
     </div>
 
@@ -48,21 +48,21 @@
         class="rounded-xl border border-gray-200/80 bg-white p-5 shadow-sm dark:border-gray-700/80 dark:bg-gray-800/80">
         <form wire:submit="save" class="space-y-4">
             <div>
-                <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
+                    <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Name') }}</label>
                 <input wire:model="name" type="text" id="name"
                     class="mt-1.5 block w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm shadow-sm transition placeholder:text-gray-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-indigo-500"
-                    placeholder="Category name">
+                    placeholder="{{ __('Category name') }}">
                 @error('name')
                 <p class="mt-1.5 text-xs font-medium text-red-600">{{ $message }}</p>
                 @enderror
             </div>
 
             <div>
-                <label for="description"
-                    class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
+                    <label for="description"
+                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Description') }}</label>
                 <textarea wire:model="description" id="description" rows="2"
                     class="mt-1.5 block w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm shadow-sm transition placeholder:text-gray-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-indigo-500"
-                    placeholder="Optional description"></textarea>
+                    placeholder="{{ __('Optional description') }}"></textarea>
                 @error('description')
                 <p class="mt-1.5 text-xs font-medium text-red-600">{{ $message }}</p>
                 @enderror
@@ -71,11 +71,11 @@
             <div class="flex gap-3 pt-1">
                 <button type="submit"
                     class="flex-1 rounded-xl bg-linear-to-r from-indigo-600 to-indigo-700 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/20 transition-all hover:from-indigo-700 hover:to-indigo-800 active:scale-[0.98]">
-                    {{ $editingCategoryId ? 'Update' : 'Create' }}
+                    {{ $editingCategoryId ? __('Update') : __('Create') }}
                 </button>
                 <button type="button" wire:click="cancel"
                     class="flex-1 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
-                    Cancel
+                    {{ __('Cancel') }}
                 </button>
             </div>
         </form>
@@ -99,8 +99,8 @@
             </div>
             <span
                 class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-400">
-                {{ $category->products_count }} products
-            </span>
+                    {{ $category->products_count }} {{ __('products') }}
+                </span>
             <div class="flex items-center gap-1 shrink-0">
                 <button wire:click="edit({{ $category->id }})"
                     class="rounded-lg p-1.5 text-gray-400 transition hover:bg-gray-100 hover:text-indigo-600 dark:hover:bg-gray-700 dark:hover:text-indigo-400">
@@ -127,11 +127,11 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
         </svg>
-        <p class="mt-3 text-sm font-medium text-gray-500 dark:text-gray-400">No categories yet</p>
+        <p class="mt-3 text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('No categories yet') }}</p>
     </div>
     @endforelse
 
-    <x-load-more :hasMorePages="$hasMorePages" target="loadMore" buttonText="Load More" loadingText="Loading..."
+    <x-load-more :hasMorePages="$hasMorePages" target="loadMore" :buttonText="__('Load More')" :loadingText="__('Loading...')"
         color="emerald" />
 
     @if ($deletingCategoryId)
@@ -146,18 +146,17 @@
                 </svg>
             </div>
             <div class="mt-4 text-center">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Delete Category?</h3>
-                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Products in this category will not be
-                    deleted.</p>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ __('Delete Category?') }}</h3>
+                    <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Products in this category will not be deleted.') }}</p>
             </div>
             <div class="mt-6 flex gap-3">
                 <button wire:click="cancelDelete"
                     class="flex-1 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
-                    Cancel
+                    {{ __('Cancel') }}
                 </button>
                 <button wire:click="delete"
                     class="flex-1 rounded-xl bg-linear-to-r from-red-600 to-red-700 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-red-600/20 transition-all hover:from-red-700 hover:to-red-800 active:scale-[0.98]">
-                    Delete
+                    {{ __('Delete') }}
                 </button>
             </div>
         </div>

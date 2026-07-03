@@ -7,7 +7,7 @@
                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
         </div>
-        <h2 class="text-xl font-bold text-gray-900 dark:text-white">Sales History</h2>
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ __('Sales History') }}</h2>
     </div>
 
     @if (session('message'))
@@ -57,7 +57,7 @@
                     <div>
                         <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $item->product->name }}</p>
                         <p class="text-xs text-gray-500 dark:text-gray-400">
-                            {{ $item->quantity }} × {{ $item->unit->name ?? 'N/A' }}
+                            {{ $item->quantity }} × {{ $item->unit->name ?? __('N/A') }}
                             <span class="text-gray-300 dark:text-gray-600">@</span>
                             ${{ number_format($item->unit_price, 2) }}
                         </p>
@@ -74,7 +74,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
-                    Delete sale
+                    {{ __('Delete sale') }}
                 </button>
             </div>
         </div>
@@ -88,13 +88,13 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2v16z" />
         </svg>
-        <p class="mt-3 text-sm font-medium text-gray-500 dark:text-gray-400">No sales yet</p>
+        <p class="mt-3 text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('No sales yet') }}</p>
         <a href="/sales"
             class="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300">
             <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
-            Create your first sale
+            {{ __('Create your first sale') }}
         </a>
     </div>
     @endforelse
@@ -102,7 +102,7 @@
     <div
         class="flex items-center justify-between gap-1 rounded-xl border border-gray-200/80 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-900 shadow-sm dark:border-gray-700/80 dark:bg-gray-800/80 dark:text-white">
         <div>
-            <span class="text-gray-500 dark:text-gray-400 text-xl">Total Revenue:</span>
+            <span class="text-gray-500 dark:text-gray-400 text-xl">{{ __('Total Revenue:') }}</span>
         </div>
         <span class="text-gray-500 dark:text-gray-400 font-bold text-xl">
             ${{ number_format($sales->sum('total_amount'), 2) }}
@@ -122,18 +122,17 @@
                 </svg>
             </div>
             <div class="mt-4 text-center">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Delete Sale?</h3>
-                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">This will restore all stock for the items in
-                    this sale. This action cannot be undone.</p>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ __('Delete Sale?') }}</h3>
+                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">{{ __('This will restore all stock for the items in this sale. This action cannot be undone.') }}</p>
             </div>
             <div class="mt-6 flex gap-3">
                 <button wire:click="cancelDelete"
                     class="flex-1 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
-                    Cancel
+                    {{ __('Cancel') }}
                 </button>
                 <button wire:click="deleteSale"
                     class="flex-1 rounded-xl bg-linear-to-r from-red-600 to-red-700 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-red-600/20 transition-all hover:from-red-700 hover:to-red-800 active:scale-[0.98]">
-                    Delete
+                    {{ __('Delete') }}
                 </button>
             </div>
         </div>

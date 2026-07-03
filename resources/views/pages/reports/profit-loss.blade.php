@@ -1,3 +1,3 @@
-<x-app title="Profit & Loss">
+<x-app title="{{ __('Profit & Loss') }}">
     <livewire:reports.profit-loss />
 </x-app>

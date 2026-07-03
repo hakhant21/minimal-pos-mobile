@@ -1,3 +1,3 @@
-<x-app title="Units">
+<x-app title="{{ __('Units') }}">
     <livewire:inventory.units />
 </x-app>

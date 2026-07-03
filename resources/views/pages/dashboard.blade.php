@@ -1,3 +1,3 @@
-<x-app title="Dashboard">
+<x-app title="{{ __('Dashboard') }}">
     <livewire:dashboard />
 </x-app>

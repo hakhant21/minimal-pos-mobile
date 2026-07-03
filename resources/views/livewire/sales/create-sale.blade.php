@@ -7,7 +7,7 @@
                     d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
             </svg>
         </div>
-        <h2 class="text-xl font-bold text-gray-900 dark:text-white">New Sale</h2>
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ __('New Sale') }}</h2>
     </div>
 
     @if (session('message'))
@@ -45,17 +45,17 @@
                         d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
             </div>
-            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Add Item</h3>
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">{{ __('Add Item') }}</h3>
         </div>
 
         <div class="space-y-4">
             <!-- Searchable Product Dropdown -->
             <div class="relative" x-data="{ open: false }" x-on:click.away="open = false">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Product</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('Product') }}</label>
 
                 <!-- Search Input -->
                 <input type="text" wire:model.live="productSearch" x-on:focus="open = true" x-on:input="open = true"
-                    placeholder="Search product..."
+                    placeholder="{{ __('Search product...') }}"
                     class="w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm shadow-sm transition placeholder:text-gray-400 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500">
 
                 <!-- Dropdown -->
@@ -69,14 +69,14 @@
                         class="px-4 py-2.5 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors {{ $selectedProductId == $product->id ? 'bg-emerald-50 dark:bg-emerald-900/20' : '' }}">
                         <div class="flex justify-between items-center">
                             <span class="text-sm font-medium text-gray-900 dark:text-white">{{ $product->name }}</span>
-                            <span class="text-xs text-gray-500 dark:text-gray-400">Stock: {{ $product->stock ?? 'N/A'
+                            <span class="text-xs text-gray-500 dark:text-gray-400">{{ __('Stock') }}: {{ $product->stock ?? 'N/A'
                                 }}</span>
                         </div>
                     </div>
                     @endforeach
                     @else
                     <div class="px-4 py-2.5 text-center text-sm text-gray-500 dark:text-gray-400">
-                        No products found
+                        {{ __('No products found') }}
                     </div>
                     @endif
                 </div>
@@ -89,10 +89,10 @@
             <!-- Units Dropdown -->
             @if(count($units) > 0)
             <div>
-                <label for="unit" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Unit</label>
+                <label for="unit" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Unit') }}</label>
                 <select wire:model.live="selectedUnitId" id="unit"
                     class="mt-1.5 block w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm shadow-sm transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-emerald-500">
-                    <option value="">Select unit</option>
+                    <option value="">{{ __('Select unit') }}</option>
                     @foreach ($units as $u)
                     <option value="{{ $u['id'] }}">
                         {{ $u['name'] }} — ${{ number_format($u['price'], 2) }}
@@ -110,14 +110,14 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
-                    <span>No units available for this product.</span>
+                    <span>{{ __('No units available for this product.') }}</span>
                 </div>
             </div>
             @endif
 
             <!-- Quantity Input -->
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Quantity</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('Quantity') }}</label>
                 <div class="flex items-center gap-2">
                     <button type="button" wire:click="decrementQuantity" wire:loading.attr="disabled"
                         class="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 transition hover:bg-gray-50 hover:border-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
@@ -149,7 +149,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
-                Add to Sale
+                {{ __('Add to Sale') }}
             </button>
         </div>
     </div>
@@ -166,8 +166,8 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
-                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Cart ({{ count($cart) }}
-                    items)</span>
+                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('Cart') }} ({{ count($cart) }}
+                        {{ __('items') }})</span>
             </div>
         </div>
 
@@ -224,7 +224,7 @@
 
         <div
             class="flex items-center justify-between border-t border-gray-100 bg-gray-50/80 px-4 py-3 dark:border-gray-700/50 dark:bg-gray-800/50">
-            <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Total</span>
+            <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('Total') }}</span>
             <span class="text-lg font-bold text-gray-900 dark:text-white">
                 ${{ number_format(array_sum(array_column($cart, 'subtotal')), 2) }}
             </span>
@@ -234,11 +234,11 @@
     <!-- Notes -->
     <div
         class="rounded-xl border border-gray-200/80 bg-white p-5 shadow-sm dark:border-gray-700/80 dark:bg-gray-800/80">
-        <label for="notes" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Notes <span
-                class="text-xs font-normal text-gray-500">(optional)</span></label>
+        <label for="notes" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Notes') }} <span
+                class="text-xs font-normal text-gray-500">{{ __('(optional)') }}</span></label>
         <textarea wire:model="notes" id="notes" rows="2"
             class="mt-1.5 block w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm shadow-sm transition placeholder:text-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-blue-500"
-            placeholder="Add any notes for this sale..."></textarea>
+            placeholder="{{ __('Add any notes for this sale...') }}"></textarea>
     </div>
 
     <!-- Complete Sale Button -->
@@ -248,7 +248,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
-        Complete Sale — ${{ number_format(array_sum(array_column($cart, 'subtotal')), 2) }}
+        {{ __('Complete Sale') }} — ${{ number_format(array_sum(array_column($cart, 'subtotal')), 2) }}
     </button>
     @endif
 </div>

@@ -41,8 +41,8 @@
                         <div
                             class="flex items-center justify-between border-b border-gray-200 px-5 py-4 dark:border-gray-800">
                             <div>
-                                <p class="text-base font-bold text-gray-900 dark:text-white">Myit Tar Mon Store</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">POS System</p>
+                                <p class="text-base font-bold text-gray-900 dark:text-white">{{ __('Myit Tar Mon Store') }}</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ __('POS System') }}</p>
                             </div>
                             <button @click="open = false"
                                 class="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300">
@@ -53,51 +53,51 @@
                             </button>
                         </div>
                         <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-                            <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')"
-                                icon="dashboard">
-                                Dashboard
-                            </x-nav-link>
+                                                            <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')"
+                                                                icon="dashboard">
+                                                                {{ __('Dashboard') }}
+                                                            </x-nav-link>
 
                             <p
                                 class="mt-5 mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
-                                Inventory</p>
+                                                                {{ __('Inventory') }}</p>
 
                             <x-nav-link href="{{ route('inventory.categories') }}"
                                 :active="request()->routeIs('inventory.categories')" icon="folder">
-                                Categories
-                            </x-nav-link>
-                            <x-nav-link href="{{ route('inventory.products') }}"
+                                                                {{ __('Categories') }}
+                                                            </x-nav-link>
+                                                            <x-nav-link href="{{ route('inventory.products') }}"
                                 :active="request()->routeIs('inventory.products')" icon="products">
-                                Products
-                            </x-nav-link>
-                            <x-nav-link href="{{ route('inventory.units') }}"
+                                                                {{ __('Products') }}
+                                                            </x-nav-link>
+                                                            <x-nav-link href="{{ route('inventory.units') }}"
                                 :active="request()->routeIs('inventory.units')" icon="list">
-                                Units
+                                {{ __('Units') }}
                             </x-nav-link>
                             <x-nav-link href="{{ route('inventory') }}" :active="request()->routeIs('inventory')"
                                 icon="inventory">
-                                Add Stock
-                            </x-nav-link>
+                                                                {{ __('Add Stock') }}
+                                                            </x-nav-link>
                             <hr class="my-4 border-gray-200 dark:border-gray-800">
 
-                            <x-nav-link href="{{ route('sales') }}" :active="request()->routeIs('sales')"
+                                                            <x-nav-link href="{{ route('sales') }}" :active="request()->routeIs('sales')"
                                 icon="shopping">
-                                Sales
+                                {{ __('Sales') }}
                             </x-nav-link>
                             <x-nav-link href="{{ route('history') }}" :active="request()->routeIs('history')"
                                 icon="history">
-                                History
-                            </x-nav-link>
+                                                                {{ __('History') }}
+                                                            </x-nav-link>
                             <hr class="my-4 border-gray-200 dark:border-gray-800">
 
                             <p
                                 class="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
-                                Reports</p>
+                                                                {{ __('Reports') }}</p>
 
                             <x-nav-link href="{{ route('reports.profit-loss') }}"
                                 :active="request()->routeIs('reports.profit-loss')" icon="chart">
-                                Profit & Loss
-                            </x-nav-link>
+                                                                {{ __('Profit & Loss') }}
+                                                            </x-nav-link>
                         </nav>
                     </div>
                 </div>
@@ -108,11 +108,11 @@
             </div>
 
             <native:bottom-nav>
-                <native:bottom-nav-item id="home" icon="house.fill" label="Home" url="{{ route('dashboard') }}"
+                    <native:bottom-nav-item id="home" icon="house.fill" label="{{ __('Home') }}" url="{{ route('dashboard') }}"
                     :active="request()->routeIs('dashboard')" />
-                <native:bottom-nav-item id="sales" icon="shopping.fill" label="Sales" url="{{ route('sales') }}"
+                    <native:bottom-nav-item id="sales" icon="shopping.fill" label="{{ __('Sales') }}" url="{{ route('sales') }}"
                     :active="request()->routeIs('sales')" />
-                <native:bottom-nav-item id="history" icon="history.fill" label="History" url="{{ route('history') }}"
+                    <native:bottom-nav-item id="history" icon="history.fill" label="{{ __('History') }}" url="{{ route('history') }}"
                     :active="request()->routeIs('history')" />
             </native:bottom-nav>
         </div>
