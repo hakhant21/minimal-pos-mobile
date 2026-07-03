@@ -5,7 +5,6 @@ namespace App\Models;
 use Database\Factories\UnitFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Unit extends Model
@@ -14,60 +13,28 @@ class Unit extends Model
     use HasFactory;
 
     protected $fillable = [
-        'product_id',
-        'name',
-        'quantity',
-        'price',
-        'cost_price',
-        'sku',
+        'name', 'is_sellable',
     ];
 
     protected function casts(): array
     {
         return [
-            'quantity' => 'integer',
-            'price' => 'decimal:2',
-            'cost_price' => 'decimal:2',
+            'is_sellable' => 'boolean',
         ];
     }
 
-    public static function boot(): void
+    public function variants(): HasMany
     {
-        parent::boot();
-
-        static::creating(function (Unit $unit) {
-            if (is_null($unit->sku)) {
-                $unit->sku = $unit->generateSku();
-            }
-        });
+        return $this->hasMany(ProductVariant::class);
     }
 
-    public function generateSku(): string
+    public function scopeSellable($query)
     {
-        $categoryAbbr = strtoupper(substr(preg_replace('/[^a-zA-Z0-9]/', '', $this->product->category->name), 0, 3));
-        $productAbbr = strtoupper(substr(preg_replace('/[^a-zA-Z0-9]/', '', $this->product->name), 0, 4));
-        $unitAbbr = strtoupper(substr(preg_replace('/[^a-zA-Z0-9]/', '', $this->name), 0, 3));
-
-        $prefix = "{$categoryAbbr}-{$productAbbr}-{$unitAbbr}";
-
-        $lastSequence = static::where('sku', 'like', "{$prefix}-%")
-            ->orderByRaw('CAST(SUBSTR(sku, -3) AS INTEGER) DESC')
-            ->value('sku');
-
-        $nextNumber = $lastSequence
-            ? (int) substr($lastSequence, -3) + 1
-            : 1;
-
-        return "{$prefix}-".str_pad((string) $nextNumber, 3, '0', STR_PAD_LEFT);
+        return $query->where('is_sellable', true);
     }
 
-    public function product(): BelongsTo
+    public function scopeOrdered($query)
     {
-        return $this->belongsTo(Product::class);
-    }
-
-    public function saleItems(): HasMany
-    {
-        return $this->hasMany(SaleItem::class);
+        return $query->orderBy('name');
     }
 }

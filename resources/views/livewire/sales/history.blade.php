@@ -29,14 +29,16 @@
             class="flex w-full items-center gap-3 px-4 py-3.5 text-left transition hover:bg-gray-50/80 dark:hover:bg-gray-800/50">
             <div
                 class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-sm font-bold text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
-                S-{{ $sale->id }}
+                {{ $sale->invoice_number }}
             </div>
             <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between gap-2">
                     <span class="text-xs text-gray-500 dark:text-gray-400">{{ $sale->created_at->format('M d, Y h:i A')
-                        }}</span>
+                        }}
+                        <span class="ml-1 text-gray-400">• {{ $sale->payment_method }}</span>
+                    </span>
                     <span class="text-base font-bold text-gray-900 dark:text-white">Ks {{
-                        number_format($sale->total_amount, 2) }}</span>
+                        number_format($sale->total, 2) }}</span>
                 </div>
                 @if ($sale->notes)
                 <p class="mt-0.5 truncate text-xs text-gray-400 dark:text-gray-500">{{ $sale->notes }}</p>
@@ -55,14 +57,16 @@
                 <div
                     class="flex items-center justify-between px-4 py-2.5 pl-12 transition hover:bg-gray-50/50 dark:hover:bg-gray-800/30">
                     <div>
-                        <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $item->product->name }}</p>
+                        <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $item->variant->product->name ??
+                            __('N/A') }}</p>
                         <p class="text-xs text-gray-500 dark:text-gray-400">
-                            {{ $item->quantity }} × {{ $item->unit->name ?? __('N/A') }}
+                            {{ $item->quantity }} × {{ $item->variant->unit->name ?? __('N/A') }}
                             <span class="text-gray-300 dark:text-gray-600">@</span>
                             Ks {{ number_format($item->unit_price, 2) }}
                         </p>
                     </div>
-                    <span class="text-sm font-semibold text-gray-900 dark:text-white">Ks {{ number_format($item->subtotal,
+                    <span class="text-sm font-semibold text-gray-900 dark:text-white">Ks {{
+                        number_format($item->total_price,
                         2) }}</span>
                 </div>
                 @endforeach
@@ -105,11 +109,10 @@
             <span class="text-gray-500 dark:text-gray-400 text-xl">{{ __('Total Revenue:') }}</span>
         </div>
         <span class="text-gray-500 dark:text-gray-400 font-bold text-xl">
-            Ks {{ number_format($sales->sum('total_amount'), 2) }}
+            Ks {{ number_format($sales->sum('total'), 2) }}
         </span>
     </div>
 
-    {{-- Delete confirmation modal --}}
     @if ($deleteSaleId)
     <div class="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
         <div wire:click="cancelDelete" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
@@ -123,7 +126,8 @@
             </div>
             <div class="mt-4 text-center">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ __('Delete Sale?') }}</h3>
-                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">{{ __('This will restore all stock for the items in this sale. This action cannot be undone.') }}</p>
+                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">{{ __('This will restore all stock for the
+                    items in this sale. This action cannot be undone.') }}</p>
             </div>
             <div class="mt-6 flex gap-3">
                 <button wire:click="cancelDelete"

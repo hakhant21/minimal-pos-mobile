@@ -18,19 +18,6 @@
         </select>
     </div>
 
-    @if (session('message'))
-    <div
-        class="flex items-center gap-2 rounded-xl border border-emerald-200/80 bg-linear-to-r from-emerald-50 to-green-50 px-4 py-3 text-sm font-medium text-emerald-800 shadow-sm dark:border-emerald-800/50 dark:from-emerald-950/30 dark:to-green-950/20 dark:text-emerald-300">
-        <svg class="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor"
-            viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        {{ session('message') }}
-    </div>
-    @endif
-
-    {{-- Summary Cards --}}
     <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <div class="rounded-2xl border border-gray-200/80 bg-white p-4 dark:border-gray-700/80 dark:bg-gray-800/80">
             <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">{{ __('Revenue') }}</p>
@@ -54,7 +41,6 @@
         </div>
     </div>
 
-    {{-- Product Breakdown --}}
     <div class="overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-sm dark:border-gray-700/80 dark:bg-gray-800/80">
         <div class="border-b border-gray-100 px-4 py-3 dark:border-gray-700/50">
             <h3 class="text-sm font-semibold text-gray-900 dark:text-white">{{ __('Product Breakdown') }}</h3>

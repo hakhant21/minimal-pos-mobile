@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\ProductVariant;
 use App\Models\Sale;
 use App\Models\SaleItem;
-use App\Models\Unit;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -14,15 +14,18 @@ class SaleItemFactory extends Factory
 {
     public function definition(): array
     {
-        $unit = Unit::factory()->create();
+        $variant = ProductVariant::factory()->create();
+        $quantity = fake()->numberBetween(1, 10);
+        $unitPrice = $variant->selling_price;
 
         return [
             'sale_id' => Sale::factory(),
-            'product_id' => $unit->product_id,
-            'unit_id' => $unit->id,
-            'quantity' => fake()->numberBetween(1, 10),
-            'unit_price' => $unit->price,
-            'subtotal' => fn (array $attrs) => $attrs['unit_price'] * $attrs['quantity'],
+            'product_variant_id' => $variant->id,
+            'quantity' => $quantity,
+            'unit_price' => $unitPrice,
+            'discount' => 0,
+            'total_price' => $unitPrice * $quantity,
+            'tax_amount' => 0,
         ];
     }
 }

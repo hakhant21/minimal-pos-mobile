@@ -3,6 +3,7 @@
 namespace App\Livewire\Sales;
 
 use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\Sale;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
@@ -18,7 +19,7 @@ class CreateSale extends Component
     public ?int $selectedProductId = null;
 
     #[Rule('required|integer|min:1')]
-    public ?int $selectedUnitId = null;
+    public ?int $selectedVariantId = null;
 
     #[Rule('required|integer|min:1')]
     public ?int $itemQuantity = 1;
@@ -27,59 +28,67 @@ class CreateSale extends Component
 
     public ?string $notes = null;
 
-    public array $units = [];
+    public string $paymentMethod = 'cash';
+
+    public array $variants = [];
 
     public string $productSearch = '';
 
     public bool $showProductDropdown = false;
 
-    public function mount()
+    public function mount(): void
     {
         $this->itemQuantity = 1;
         $this->cart = [];
         $this->showProductDropdown = false;
+        $this->paymentMethod = 'cash';
     }
 
-    public function updatedProductSearch()
+    public function updatedProductSearch(): void
     {
         $this->showProductDropdown = true;
     }
 
     public function updatedSelectedProductId(): void
     {
-        $this->selectedUnitId = null;
-        $this->loadProductUnits();
+        $this->selectedVariantId = null;
+        $this->loadProductVariants();
     }
 
-    public function selectProduct($productId)
+    public function selectProduct(int $productId): void
     {
-        $this->selectedProductId = (int) $productId;
-        $this->selectedUnitId = null;
+        $this->selectedProductId = $productId;
+        $this->selectedVariantId = null;
         $this->showProductDropdown = false;
 
-        // Get product name for search field
         $product = Product::find($this->selectedProductId);
         if ($product) {
             $this->productSearch = $product->name;
         }
 
-        $this->loadProductUnits();
+        $this->loadProductVariants();
     }
 
-    public function loadProductUnits(): void
+    public function loadProductVariants(): void
     {
-        $this->units = [];
+        $this->variants = [];
 
         if ($this->selectedProductId) {
-            $product = Product::with('units')->find($this->selectedProductId);
-            if ($product && $product->units) {
-                foreach ($product->units as $unit) {
-                    $this->units[] = [
-                        'id' => $unit->id,
-                        'name' => $unit->name,
-                        'price' => (float) ($unit->pivot->price ?? $unit->price ?? 0),
-                    ];
-                }
+            $variants = ProductVariant::with('unit')
+                ->where('product_id', $this->selectedProductId)
+                ->where('is_active', true)
+                ->get();
+
+            foreach ($variants as $variant) {
+                $this->variants[] = [
+                    'id' => $variant->id,
+                    'display_name' => $variant->display_name,
+                    'unit_name' => $variant->unit->name,
+                    'units_per_package' => $variant->units_per_package,
+                    'price' => (float) $variant->current_price,
+                    'stock' => $variant->stock_quantity,
+                    'stock_status' => $variant->stock_status,
+                ];
             }
         }
     }
@@ -100,45 +109,36 @@ class CreateSale extends Component
     {
         $this->validate();
 
-        $product = Product::with('units')->findOrFail($this->selectedProductId);
-        $unit = $product->units->firstWhere('id', $this->selectedUnitId);
+        $variant = ProductVariant::with('product', 'unit')->findOrFail($this->selectedVariantId);
 
-        if (! $unit) {
-            session()->flash('error', 'Selected unit not found for this product.');
+        $unitPrice = (float) $variant->current_price;
+        $totalPrice = $unitPrice * $this->itemQuantity;
 
-            return;
-        }
-
-        $unitPrice = (float) ($unit->pivot->price ?? $unit->price ?? 0);
-        $subtotal = $unitPrice * $this->itemQuantity;
-
-        // Check if product with same unit already exists in cart
         $existingIndex = null;
         foreach ($this->cart as $index => $item) {
-            if ($item['product_id'] == $product->id && $item['unit_id'] == $unit->id) {
+            if ($item['variant_id'] === $variant->id) {
                 $existingIndex = $index;
                 break;
             }
         }
 
         if ($existingIndex !== null) {
-            // Update existing item
             $this->cart[$existingIndex]['quantity'] += $this->itemQuantity;
-            $this->cart[$existingIndex]['subtotal'] = $this->cart[$existingIndex]['unit_price'] * $this->cart[$existingIndex]['quantity'];
+            $this->cart[$existingIndex]['total_price'] = $this->cart[$existingIndex]['unit_price'] * $this->cart[$existingIndex]['quantity'];
         } else {
-            // Add new item
             $this->cart[] = [
-                'product_id' => $product->id,
-                'product_name' => $product->name,
-                'unit_id' => $unit->id,
-                'unit_name' => $unit->name,
-                'quantity' => $this->itemQuantity,
+                'variant_id' => $variant->id,
+                'product_id' => $variant->product_id,
+                'product_name' => $variant->product->name,
+                'variant_name' => $variant->display_name,
+                'unit_name' => $variant->unit->name,
                 'unit_price' => $unitPrice,
-                'subtotal' => $subtotal,
+                'quantity' => $this->itemQuantity,
+                'total_price' => $totalPrice,
             ];
         }
 
-        $this->reset(['selectedProductId', 'selectedUnitId', 'units', 'productSearch']);
+        $this->reset(['selectedProductId', 'selectedVariantId', 'variants', 'productSearch']);
         $this->showProductDropdown = false;
         $this->itemQuantity = 1;
 
@@ -148,9 +148,8 @@ class CreateSale extends Component
     public function increaseCartItemQuantity(int $index): void
     {
         if (isset($this->cart[$index])) {
-            $this->cart[$index]['quantity'] = (int) ($this->cart[$index]['quantity'] ?? 0) + 1;
-            $this->cart[$index]['unit_price'] = (float) ($this->cart[$index]['unit_price'] ?? 0);
-            $this->cart[$index]['subtotal'] = $this->cart[$index]['unit_price'] * $this->cart[$index]['quantity'];
+            $this->cart[$index]['quantity']++;
+            $this->cart[$index]['total_price'] = $this->cart[$index]['unit_price'] * $this->cart[$index]['quantity'];
             $this->cart = array_values($this->cart);
         }
     }
@@ -158,11 +157,9 @@ class CreateSale extends Component
     public function decreaseCartItemQuantity(int $index): void
     {
         if (isset($this->cart[$index])) {
-            $currentQty = (int) ($this->cart[$index]['quantity'] ?? 0);
-            if ($currentQty > 1) {
-                $this->cart[$index]['quantity'] = $currentQty - 1;
-                $this->cart[$index]['unit_price'] = (float) ($this->cart[$index]['unit_price'] ?? 0);
-                $this->cart[$index]['subtotal'] = $this->cart[$index]['unit_price'] * $this->cart[$index]['quantity'];
+            if ($this->cart[$index]['quantity'] > 1) {
+                $this->cart[$index]['quantity']--;
+                $this->cart[$index]['total_price'] = $this->cart[$index]['unit_price'] * $this->cart[$index]['quantity'];
                 $this->cart = array_values($this->cart);
             } else {
                 $this->removeFromCart($index);
@@ -176,7 +173,7 @@ class CreateSale extends Component
         $this->cart = array_values($this->cart);
     }
 
-    public function closeDropdown()
+    public function closeDropdown(): void
     {
         $this->showProductDropdown = false;
     }
@@ -186,11 +183,12 @@ class CreateSale extends Component
         foreach ($this->cart as $index => $item) {
             $this->cart[$index]['quantity'] = (int) ($item['quantity'] ?? 0);
             $this->cart[$index]['unit_price'] = (float) ($item['unit_price'] ?? 0);
-            $this->cart[$index]['subtotal'] = (float) ($item['subtotal'] ?? 0);
+            $this->cart[$index]['total_price'] = (float) ($item['total_price'] ?? 0);
             $this->cart[$index]['product_name'] = (string) ($item['product_name'] ?? '');
+            $this->cart[$index]['variant_name'] = (string) ($item['variant_name'] ?? '');
             $this->cart[$index]['unit_name'] = (string) ($item['unit_name'] ?? '');
+            $this->cart[$index]['variant_id'] = (int) ($item['variant_id'] ?? 0);
             $this->cart[$index]['product_id'] = (int) ($item['product_id'] ?? 0);
-            $this->cart[$index]['unit_id'] = (int) ($item['unit_id'] ?? 0);
         }
     }
 
@@ -202,45 +200,65 @@ class CreateSale extends Component
             return;
         }
 
-        $total = array_sum(array_column($this->cart, 'subtotal'));
+        $subtotal = array_sum(array_column($this->cart, 'total_price'));
+        $discount = 0;
+        $tax = 0;
+        $total = $subtotal - $discount + $tax;
 
         $sale = Sale::create([
-            'total_amount' => $total,
+            'invoice_number' => Sale::generateInvoiceNumber(),
+            'user_id' => auth()->id() ?? 1,
+            'subtotal' => $subtotal,
+            'discount' => $discount,
+            'tax' => $tax,
+            'total' => $total,
+            'payment_method' => $this->paymentMethod,
+            'amount_paid' => $total,
+            'change_amount' => 0,
             'notes' => $this->notes,
+            'completed_at' => now(),
         ]);
 
         foreach ($this->cart as $item) {
             $sale->items()->create([
-                'product_id' => $item['product_id'],
-                'unit_id' => $item['unit_id'],
+                'product_variant_id' => $item['variant_id'],
                 'quantity' => $item['quantity'],
                 'unit_price' => $item['unit_price'],
-                'subtotal' => $item['subtotal'],
+                'discount' => 0,
+                'total_price' => $item['total_price'],
+                'tax_amount' => 0,
             ]);
+
+            // Decrement stock and log movement
+            $variant = ProductVariant::find($item['variant_id']);
+            if ($variant) {
+                $variant->decrementStock($item['quantity'], 'Sale completed', $sale->id);
+            }
         }
 
         $this->reset(['cart', 'notes', 'productSearch']);
         $this->showProductDropdown = false;
         $this->itemQuantity = 1;
 
-        session()->flash('message', 'Sale completed successfully.');
+        session()->flash('message', "Sale completed successfully. Invoice: {$sale->invoice_number}");
     }
 
     public function render()
     {
-        // Get all products for the dropdown
-        $allProducts = Product::orderBy('name')->get();
+        $allProducts = Product::with('variants.unit')
+            ->orderBy('name')
+            ->get();
 
-        // Filter products based on search
         if (! empty($this->productSearch)) {
             $allProducts = $allProducts->filter(function ($product) {
-                return stripos($product->name, $this->productSearch) !== false;
+                return stripos($product->name, $this->productSearch) !== false
+                    || stripos($product->brand ?? '', $this->productSearch) !== false;
             });
         }
 
         return view('livewire.sales.create-sale', [
             'products' => $allProducts,
-            'allProducts' => Product::orderBy('name')->get(), // For debugging
+            'cartTotal' => array_sum(array_column($this->cart, 'total_price')),
         ]);
     }
 }

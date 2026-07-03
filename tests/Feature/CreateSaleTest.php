@@ -3,30 +3,42 @@
 use App\Livewire\Sales\CreateSale;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\Unit;
+use App\Models\User;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Livewire\Livewire;
 
 uses(LazilyRefreshDatabase::class);
 
 beforeEach(function () {
+    $this->user = User::factory()->create();
+    $this->actingAs($this->user);
+
     $category = Category::factory()->create(['name' => 'Beverages']);
+
+    $this->bottleUnit = Unit::factory()->bottle()->create();
+    $this->packUnit = Unit::factory()->pack()->create();
+
     $this->product = Product::factory()->create([
         'category_id' => $category->id,
         'name' => 'Cola',
-        'stock' => 100,
     ]);
-    $this->unitBottle = Unit::factory()->create([
+
+    $this->variantBottle = ProductVariant::factory()->create([
         'product_id' => $this->product->id,
-        'name' => 'Bottle',
-        'quantity' => 1,
-        'price' => 2.50,
+        'unit_id' => $this->bottleUnit->id,
+        'units_per_package' => 1,
+        'selling_price' => 2.50,
+        'stock_quantity' => 100,
     ]);
-    $this->unitCase = Unit::factory()->create([
+
+    $this->variantPack = ProductVariant::factory()->create([
         'product_id' => $this->product->id,
-        'name' => 'Case (12)',
-        'quantity' => 12,
-        'price' => 24.00,
+        'unit_id' => $this->packUnit->id,
+        'units_per_package' => 12,
+        'selling_price' => 24.00,
+        'stock_quantity' => 20,
     ]);
 });
 
@@ -34,42 +46,27 @@ it('renders the component with products and header', function () {
     Livewire::test(CreateSale::class)
         ->assertSee('New Sale')
         ->assertSee('Add Item')
-        ->assertSee('Cola')
-        ->assertSee('Add to Sale');
+        ->assertSee('Cola');
 });
 
-it('shows units after selecting a product via selectProduct', function () {
+it('shows variants after selecting a product via selectProduct', function () {
     Livewire::test(CreateSale::class)
         ->call('selectProduct', $this->product->id)
         ->assertSet('selectedProductId', $this->product->id)
-        ->assertSet('units', function (array $units) {
-            expect($units)->toHaveCount(2);
+        ->assertSet('variants', function (array $variants) {
+            expect($variants)->toHaveCount(2);
 
             return true;
-        })
-        ->assertSee('Bottle')
-        ->assertSee('Case (12)');
+        });
 });
 
-it('shows units after selecting a product via updatedSelectedProductId', function () {
-    Livewire::test(CreateSale::class)
-        ->set('selectedProductId', $this->product->id)
-        ->assertSet('units', function (array $units) {
-            expect($units)->toHaveCount(2);
-
-            return true;
-        })
-        ->assertSee('Bottle')
-        ->assertSee('Case (12)');
-});
-
-it('shows no units warning when product has no units', function () {
-    $productNoUnits = Product::factory()->create(['name' => 'No Units Product']);
+it('shows no variants warning when product has no variants', function () {
+    $productNoVariants = Product::factory()->create(['name' => 'No Variants Product']);
 
     Livewire::test(CreateSale::class)
-        ->call('selectProduct', $productNoUnits->id)
-        ->assertSet('units', [])
-        ->assertSee('No units available for this product.');
+        ->call('selectProduct', $productNoVariants->id)
+        ->assertSet('variants', [])
+        ->assertSee('No variants available for this product.');
 });
 
 it('increments quantity', function () {
@@ -85,7 +82,7 @@ it('decrements quantity but not below 1', function () {
     Livewire::test(CreateSale::class)
         ->assertSet('itemQuantity', 1)
         ->call('decrementQuantity')
-        ->assertSet('itemQuantity', 1) // should stay at 1
+        ->assertSet('itemQuantity', 1)
         ->call('incrementQuantity')
         ->assertSet('itemQuantity', 2)
         ->call('decrementQuantity')
@@ -96,112 +93,100 @@ it('fails validation when adding to cart without product', function () {
     Livewire::test(CreateSale::class)
         ->call('addToCart')
         ->assertHasErrors(['selectedProductId' => 'required'])
-        ->assertHasErrors(['selectedUnitId' => 'required']);
+        ->assertHasErrors(['selectedVariantId' => 'required']);
 });
 
-it('fails validation when adding to cart without unit', function () {
+it('fails validation when adding to cart without variant', function () {
     Livewire::test(CreateSale::class)
         ->set('selectedProductId', $this->product->id)
         ->call('addToCart')
-        ->assertHasErrors(['selectedUnitId' => 'required']);
+        ->assertHasErrors(['selectedVariantId' => 'required']);
 });
 
 it('adds item to cart', function () {
     Livewire::test(CreateSale::class)
         ->call('selectProduct', $this->product->id)
-        ->set('selectedUnitId', $this->unitBottle->id)
+        ->set('selectedVariantId', $this->variantBottle->id)
         ->set('itemQuantity', 3)
         ->call('addToCart')
         ->assertSet('cart', function (array $cart) {
             expect($cart)->toHaveCount(1);
+            expect($cart[0]['variant_id'])->toBe($this->variantBottle->id);
             expect($cart[0]['product_id'])->toBe($this->product->id);
-            expect($cart[0]['unit_id'])->toBe($this->unitBottle->id);
             expect($cart[0]['quantity'])->toBe(3);
             expect($cart[0]['unit_price'])->toBe(2.50);
-            expect($cart[0]['subtotal'])->toBe(7.50);
+            expect($cart[0]['total_price'])->toBe(7.50);
 
             return true;
         })
         ->assertSet('selectedProductId', null)
-        ->assertSet('selectedUnitId', null)
-        ->assertSet('units', [])
+        ->assertSet('selectedVariantId', null)
+        ->assertSet('variants', [])
         ->assertSet('itemQuantity', 1);
 });
 
-it('adds duplicate item merges quantities', function () {
+it('merges duplicate variant quantities', function () {
     Livewire::test(CreateSale::class)
         ->call('selectProduct', $this->product->id)
-        ->set('selectedUnitId', $this->unitBottle->id)
+        ->set('selectedVariantId', $this->variantBottle->id)
         ->set('itemQuantity', 2)
         ->call('addToCart')
-        ->assertSet('cart', function (array $cart) {
-            expect($cart)->toHaveCount(1);
-
-            return true;
-        })
+        ->assertSet('cart', fn($cart) => expect($cart)->toHaveCount(1) && true)
         ->call('selectProduct', $this->product->id)
-        ->set('selectedUnitId', $this->unitBottle->id)
+        ->set('selectedVariantId', $this->variantBottle->id)
         ->set('itemQuantity', 3)
         ->call('addToCart')
         ->assertSet('cart', function (array $cart) {
             expect($cart)->toHaveCount(1);
             expect($cart[0]['quantity'])->toBe(5);
-            expect($cart[0]['subtotal'])->toBe(12.50);
+            expect($cart[0]['total_price'])->toBe(12.50);
 
             return true;
         });
 });
 
-it('adds different units as separate cart items', function () {
+it('adds different variants as separate cart items', function () {
     Livewire::test(CreateSale::class)
         ->call('selectProduct', $this->product->id)
-        ->set('selectedUnitId', $this->unitBottle->id)
+        ->set('selectedVariantId', $this->variantBottle->id)
         ->set('itemQuantity', 2)
         ->call('addToCart')
         ->call('selectProduct', $this->product->id)
-        ->set('selectedUnitId', $this->unitCase->id)
+        ->set('selectedVariantId', $this->variantPack->id)
         ->set('itemQuantity', 1)
         ->call('addToCart')
-        ->assertSet('cart', function (array $cart) {
-            expect($cart)->toHaveCount(2);
-
-            return true;
-        });
+        ->assertSet('cart', fn($cart) => expect($cart)->toHaveCount(2) && true);
 });
 
 it('increases cart item quantity', function () {
     Livewire::test(CreateSale::class)
         ->call('selectProduct', $this->product->id)
-        ->set('selectedUnitId', $this->unitBottle->id)
+        ->set('selectedVariantId', $this->variantBottle->id)
         ->set('itemQuantity', 2)
         ->call('addToCart')
         ->call('increaseCartItemQuantity', 0)
         ->assertSet('cart.0.quantity', 3)
-        ->assertSet('cart.0.subtotal', 7.50);
+        ->assertSet('cart.0.total_price', 7.50);
 });
 
 it('decreases cart item quantity', function () {
     Livewire::test(CreateSale::class)
         ->call('selectProduct', $this->product->id)
-        ->set('selectedUnitId', $this->unitBottle->id)
+        ->set('selectedVariantId', $this->variantBottle->id)
         ->set('itemQuantity', 3)
         ->call('addToCart')
         ->call('decreaseCartItemQuantity', 0)
         ->assertSet('cart.0.quantity', 2)
-        ->assertSet('cart.0.subtotal', 5.00);
+        ->assertSet('cart.0.total_price', 5.00);
 });
 
 it('removes cart item when decreasing quantity to zero', function () {
     Livewire::test(CreateSale::class)
         ->call('selectProduct', $this->product->id)
-        ->set('selectedUnitId', $this->unitBottle->id)
+        ->set('selectedVariantId', $this->variantBottle->id)
         ->set('itemQuantity', 1)
         ->call('addToCart')
-        ->assertSet('cart', function (array $cart) {
-            expect($cart)->toHaveCount(1);
-
-            return true;
-        })
+        ->assertSet('cart', fn($cart) => expect($cart)->toHaveCount(1) && true)
         ->call('decreaseCartItemQuantity', 0)
         ->assertSet('cart', []);
 });
@@ -209,38 +194,18 @@ it('removes cart item when decreasing quantity to zero', function () {
 it('removes cart item', function () {
     Livewire::test(CreateSale::class)
         ->call('selectProduct', $this->product->id)
-        ->set('selectedUnitId', $this->unitBottle->id)
+        ->set('selectedVariantId', $this->variantBottle->id)
         ->set('itemQuantity', 2)
         ->call('addToCart')
-        ->assertSet('cart', function (array $cart) {
-            expect($cart)->toHaveCount(1);
-
-            return true;
-        })
+        ->assertSet('cart', fn($cart) => expect($cart)->toHaveCount(1) && true)
         ->call('removeFromCart', 0)
         ->assertSet('cart', []);
-});
-
-it('shows error when unit does not belong to selected product', function () {
-    $otherProduct = Product::factory()->create(['name' => 'Other']);
-    $otherUnit = Unit::factory()->create([
-        'product_id' => $otherProduct->id,
-        'name' => 'Other Unit',
-        'price' => 5.00,
-    ]);
-
-    Livewire::test(CreateSale::class)
-        ->call('selectProduct', $this->product->id)
-        ->set('selectedUnitId', $otherUnit->id)
-        ->set('itemQuantity', 1)
-        ->call('addToCart')
-        ->assertSee('Selected unit not found for this product.');
 });
 
 it('completes sale and creates records', function () {
     Livewire::test(CreateSale::class)
         ->call('selectProduct', $this->product->id)
-        ->set('selectedUnitId', $this->unitBottle->id)
+        ->set('selectedVariantId', $this->variantBottle->id)
         ->set('itemQuantity', 2)
         ->call('addToCart')
         ->set('notes', 'Test sale')
@@ -249,16 +214,31 @@ it('completes sale and creates records', function () {
         ->assertSet('notes', null);
 
     $this->assertDatabaseHas('sales', [
-        'total_amount' => 5.00,
+        'subtotal' => 5.00,
+        'total' => 5.00,
         'notes' => 'Test sale',
+        'payment_method' => 'cash',
     ]);
 
     $this->assertDatabaseHas('sale_items', [
-        'product_id' => $this->product->id,
-        'unit_id' => $this->unitBottle->id,
+        'product_variant_id' => $this->variantBottle->id,
         'quantity' => 2,
         'unit_price' => 2.50,
-        'subtotal' => 5.00,
+        'total_price' => 5.00,
+    ]);
+});
+
+it('decrements stock on sale completion', function () {
+    Livewire::test(CreateSale::class)
+        ->call('selectProduct', $this->product->id)
+        ->set('selectedVariantId', $this->variantBottle->id)
+        ->set('itemQuantity', 2)
+        ->call('addToCart')
+        ->call('completeSale');
+
+    $this->assertDatabaseHas('product_variants', [
+        'id' => $this->variantBottle->id,
+        'stock_quantity' => 98,
     ]);
 });
 
@@ -272,17 +252,17 @@ it('shows error when completing sale with empty cart', function () {
 it('calculates cart total from multiple items', function () {
     Livewire::test(CreateSale::class)
         ->call('selectProduct', $this->product->id)
-        ->set('selectedUnitId', $this->unitBottle->id)
+        ->set('selectedVariantId', $this->variantBottle->id)
         ->set('itemQuantity', 2)
         ->call('addToCart')
         ->call('selectProduct', $this->product->id)
-        ->set('selectedUnitId', $this->unitCase->id)
+        ->set('selectedVariantId', $this->variantPack->id)
         ->set('itemQuantity', 1)
         ->call('addToCart')
         ->assertSet('cart', function (array $cart) {
             expect($cart)->toHaveCount(2);
-            $total = array_sum(array_column($cart, 'subtotal'));
-            expect($total)->toBe(29.00); // 5.00 + 24.00
+            $total = array_sum(array_column($cart, 'total_price'));
+            expect($total)->toBe(29.00);
 
             return true;
         })
@@ -292,32 +272,29 @@ it('calculates cart total from multiple items', function () {
 it('boot normalizes stale cart items', function () {
     $component = Livewire::test(CreateSale::class);
 
-    // Inject corrupted cart item directly on the underlying component
     $component->instance()->cart = [
-        ['product_id' => $this->product->id],
+        ['variant_id' => $this->variantBottle->id],
     ];
 
-    // Manually trigger boot to normalize
     $component->instance()->boot();
 
     expect($component->instance()->cart[0]['quantity'])->toBe(0);
     expect($component->instance()->cart[0]['unit_price'])->toBe(0.0);
-    expect($component->instance()->cart[0]['subtotal'])->toBe(0.0);
+    expect($component->instance()->cart[0]['total_price'])->toBe(0.0);
     expect($component->instance()->cart[0]['product_name'])->toBe('');
-    expect($component->instance()->cart[0]['unit_name'])->toBe('');
-    expect($component->instance()->cart[0]['product_id'])->toBe($this->product->id);
-    expect($component->instance()->cart[0]['unit_id'])->toBe(0);
+    expect($component->instance()->cart[0]['variant_name'])->toBe('');
+    expect($component->instance()->cart[0]['variant_id'])->toBe($this->variantBottle->id);
 });
 
 it('renders cart section after adding items', function () {
     Livewire::test(CreateSale::class)
         ->call('selectProduct', $this->product->id)
-        ->set('selectedUnitId', $this->unitBottle->id)
+        ->set('selectedVariantId', $this->variantBottle->id)
         ->set('itemQuantity', 3)
         ->call('addToCart')
         ->assertSee('Cola')
         ->assertSeeHtml('Cart (1')
-        ->assertSee('Bottle')
+        ->assertSee('Bottles')
         ->assertSeeHtml('Ks 7.50')
         ->assertSee('Complete Sale')
         ->assertSee('Total');

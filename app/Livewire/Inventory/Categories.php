@@ -3,6 +3,7 @@
 namespace App\Livewire\Inventory;
 
 use App\Models\Category;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
 
@@ -21,6 +22,14 @@ class Categories extends Component
 
     #[Rule('nullable|string|max:1000')]
     public ?string $description = null;
+
+    #[Rule('nullable|string|max:50')]
+    public ?string $icon = null;
+
+    #[Rule('nullable|string|max:7')]
+    public ?string $color = null;
+
+    public bool $is_active = true;
 
     public function loadMore(): void
     {
@@ -41,24 +50,29 @@ class Categories extends Component
         $this->editingCategoryId = $category->id;
         $this->name = $category->name;
         $this->description = $category->description;
+        $this->icon = $category->icon;
+        $this->color = $category->color;
+        $this->is_active = $category->is_active;
     }
 
     public function save(): void
     {
         $this->validate();
 
+        $data = [
+            'name' => $this->name,
+            'slug' => Str::slug($this->name),
+            'description' => $this->description,
+            'icon' => $this->icon,
+            'color' => $this->color,
+            'is_active' => $this->is_active,
+        ];
+
         if ($this->editingCategoryId) {
-            $category = Category::findOrFail($this->editingCategoryId);
-            $category->update([
-                'name' => $this->name,
-                'description' => $this->description,
-            ]);
+            Category::findOrFail($this->editingCategoryId)->update($data);
             session()->flash('message', 'Category updated.');
         } else {
-            Category::create([
-                'name' => $this->name,
-                'description' => $this->description,
-            ]);
+            Category::create($data);
             session()->flash('message', 'Category created.');
         }
 
@@ -102,12 +116,18 @@ class Categories extends Component
         $this->editingCategoryId = null;
         $this->name = '';
         $this->description = null;
+        $this->icon = null;
+        $this->color = null;
+        $this->is_active = true;
     }
 
     public function render()
     {
         return view('livewire.inventory.categories', [
-            'categories' => Category::withCount('products')->orderBy('name')->take($this->perPage)->get(),
+            'categories' => Category::withCount('products')
+                ->orderBy('name')
+                ->take($this->perPage)
+                ->get(),
             'hasMorePages' => Category::count() > $this->perPage,
         ]);
     }

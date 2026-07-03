@@ -3,7 +3,7 @@
 namespace App\Livewire\Inventory;
 
 use App\Models\Product;
-use App\Models\Unit;
+use App\Models\ProductVariant;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
 
@@ -12,8 +12,8 @@ class Instock extends Component
     #[Rule('required|exists:products,id')]
     public ?int $product_id = null;
 
-    #[Rule('required|exists:units,id')]
-    public ?int $unit_id = null;
+    #[Rule('required|exists:product_variants,id')]
+    public ?int $variant_id = null;
 
     #[Rule('required|integer|min:1')]
     public ?int $quantity = null;
@@ -34,91 +34,72 @@ class Instock extends Component
     public function selectProduct(int $productId): void
     {
         $this->product_id = $productId;
-        $this->product = Product::with('units')->find($productId);
-        $this->unit_id = null;
+        $this->product = Product::with('variants.unit')->find($productId);
+        $this->variant_id = null;
+        $this->purchaseCost = null;
 
         if ($this->product) {
             $this->productSearch = $this->product->name;
-            if ($this->product->units->isNotEmpty()) {
-                $firstUnit = $this->product->units->first();
-                $this->unit_id = $firstUnit->id;
-                $this->purchaseCost = $firstUnit->cost_price;
+            $firstVariant = $this->product->variants->first();
+            if ($firstVariant) {
+                $this->variant_id = $firstVariant->id;
+                $this->purchaseCost = (float) $firstVariant->cost_price;
             }
         }
     }
 
-    public function updatedUnitId(): void
+    public function updatedVariantId(): void
     {
-        if ($this->product && $this->unit_id) {
-            $unit = $this->product->units->find($this->unit_id);
-            if ($unit) {
-                $this->purchaseCost = $unit->cost_price;
+        if ($this->product && $this->variant_id) {
+            $variant = $this->product->variants->find($this->variant_id);
+            if ($variant) {
+                $this->purchaseCost = (float) $variant->cost_price;
             }
         }
-    }
-
-    public function updatedProductId(): void
-    {
-        $this->product = Product::with('units')->find($this->product_id);
-        if ($this->product && $this->product->units->isNotEmpty()) {
-            $firstUnit = $this->product->units->first();
-            $this->unit_id = $firstUnit->id;
-            $this->purchaseCost = $firstUnit->cost_price;
-        }
-    }
-
-    public function updatedProductSearch(): void
-    {
-        $this->resetPage();
     }
 
     public function addStock(): void
     {
         $this->validate();
 
-        $product = Product::findOrFail($this->product_id);
-        $unit = Unit::findOrFail($this->unit_id);
+        $variant = ProductVariant::findOrFail($this->variant_id);
 
-        $product->increment('stock', $this->quantity);
+        $variant->increment('stock_quantity', $this->quantity);
 
+        // Update weighted average cost price
         if ($this->purchaseCost > 0) {
-            if ($unit->cost_price) {
-                $totalQty = $unit->quantity + $this->quantity;
-                $totalCost = ($unit->cost_price * $unit->quantity) + ($this->purchaseCost * $this->quantity);
-                $unit->update(['cost_price' => round($totalCost / $totalQty, 2)]);
-            } else {
-                $unit->update(['cost_price' => $this->purchaseCost]);
-            }
+            $totalQty = $before + $this->quantity;
+            $totalCost = ((float) $variant->cost_price * $before) + ($this->purchaseCost * $this->quantity);
+            $variant->update(['cost_price' => round($totalCost / $totalQty, 2)]);
         }
 
-        $this->reset(['product_id', 'unit_id', 'quantity', 'product', 'productSearch', 'purchaseCost']);
+        $added = $this->quantity;
+        $this->reset(['product_id', 'variant_id', 'quantity', 'product', 'productSearch', 'purchaseCost']);
 
-        session()->flash('message', "Added {$this->quantity} {$unit->name}(s) to {$product->name} stock successfully.");
-    }
-
-    public function getSelectedUnitProperty()
-    {
-        if ($this->unit_id && $this->product) {
-            return $this->product->units->find($this->unit_id);
-        }
-
-        return null;
+        session()->flash('message', "Added {$added} item(s) to stock successfully.");
     }
 
     public function render()
     {
-        // Build query for paginated products
-        $productsQuery = Product::with('units', 'category')->orderBy('name');
+        $productsQuery = Product::with('variants.unit', 'category')->orderBy('name');
 
         if (! empty($this->productSearch)) {
-            $productsQuery->where('name', 'like', '%'.$this->productSearch.'%');
+            $productsQuery->where('name', 'like', '%' . $this->productSearch . '%');
         }
+
+        $lowStockVariants = ProductVariant::with('product.category', 'unit')
+            ->whereColumn('stock_quantity', '<=', 'min_stock_level')
+            ->where('stock_quantity', '>', 0)
+            ->orderBy('stock_quantity')
+            ->get();
 
         return view('livewire.inventory.instock', [
             'products' => $productsQuery->take($this->perPage)->get(),
             'hasMorePages' => $productsQuery->count() > $this->perPage,
-            'lowStockProducts' => Product::with('category')->where('stock', '<', 10)->orderBy('stock')->get(),
-            'selectedUnit' => $this->getSelectedUnitProperty(),
+            'lowStockVariants' => $lowStockVariants,
+            'selectedVariant' => $this->product && $this->variant_id
+                ? $this->product->variants->find($this->variant_id)
+                : null,
         ]);
     }
 }

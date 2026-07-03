@@ -36,8 +36,8 @@ class ProfitLoss extends Component
 
         if ($this->selectedMonth) {
             $rows = DB::table('sale_items')
-                ->join('products', 'products.id', '=', 'sale_items.product_id')
-                ->join('units', 'units.id', '=', 'sale_items.unit_id')
+                ->join('product_variants', 'product_variants.id', '=', 'sale_items.product_variant_id')
+                ->join('products', 'products.id', '=', 'product_variants.product_id')
                 ->join('sales', 'sales.id', '=', 'sale_items.sale_id')
                 ->whereRaw("strftime('%Y-%m', sales.created_at) = ?", [$this->selectedMonth])
                 ->select(
@@ -45,8 +45,8 @@ class ProfitLoss extends Component
                     'products.name',
                     DB::raw('COUNT(DISTINCT sale_items.id) as items_sold'),
                     DB::raw('SUM(sale_items.quantity) as total_qty'),
-                    DB::raw('SUM(sale_items.subtotal) as revenue'),
-                    DB::raw('SUM(sale_items.quantity * COALESCE(units.cost_price, 0)) as cogs'),
+                    DB::raw('SUM(sale_items.total_price) as revenue'),
+                    DB::raw('SUM(sale_items.quantity * COALESCE(product_variants.cost_price, 0)) as cogs'),
                 )
                 ->groupBy('products.id', 'products.name')
                 ->orderBy('revenue', 'desc')
@@ -80,10 +80,8 @@ class ProfitLoss extends Component
         $allMonths = $this->months;
         if (! in_array(date('Y-m'), $allMonths)) {
             $allMonths[] = date('Y-m');
-            sort($allMonths);
-            $allMonths = array_reverse($allMonths);
         }
-        $allMonths = array_values(array_unique($allMonths));
+        $allMonths = array_values(array_unique(array_reverse($allMonths)));
 
         return view('livewire.reports.profit-loss', [
             'productRows' => $productRows,

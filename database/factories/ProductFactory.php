@@ -16,9 +16,12 @@ class ProductFactory extends Factory
         return [
             'category_id' => Category::factory(),
             'name' => fake()->unique()->words(2, true),
-            'description' => fake()->sentence(),
             'sku' => fake()->unique()->ean13(),
-            'stock' => fake()->numberBetween(0, 500),
+            'barcode' => fake()->unique()->ean13(),
+            'description' => fake()->sentence(),
+            'brand' => fake()->word(),
+            'is_active' => true,
+            'is_taxable' => true,
         ];
     }
 }

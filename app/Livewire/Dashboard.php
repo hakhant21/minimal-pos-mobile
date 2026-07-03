@@ -2,13 +2,13 @@
 
 namespace App\Livewire;
 
-use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\Sale;
 use Livewire\Component;
 
 class Dashboard extends Component
 {
-    public $expandedSales = [];
+    public array $expandedSales = [];
 
     public function toggleRecentSale(int $saleId): void
     {
@@ -21,32 +21,29 @@ class Dashboard extends Component
 
     public function render()
     {
-        $totalStock = Product::sum('stock');
+        $totalStock = ProductVariant::sum('stock_quantity');
         $todaySales = Sale::whereDate('created_at', today())->count();
-        $todayRevenue = Sale::whereDate('created_at', today())->sum('total_amount');
+        $todayRevenue = Sale::whereDate('created_at', today())->completed()->sum('total');
 
-        $inventoryValue = Product::join('units', 'products.id', '=', 'units.product_id')
-            ->whereNotNull('units.cost_price')
-            ->where('units.cost_price', '>', 0)
-            ->selectRaw('products.id, products.stock, MIN(units.cost_price / NULLIF(units.quantity, 0)) as min_cost_per_item')
-            ->groupBy('products.id', 'products.stock')
-            ->get()
-            ->sum(fn ($item) => $item->stock * $item->min_cost_per_item);
+        $inventoryValue = ProductVariant::where('stock_quantity', '>', 0)
+            ->selectRaw('SUM(stock_quantity * cost_price) as total_value')
+            ->value('total_value') ?? 0;
 
-        $lowStockProducts = Product::with('category')
-            ->where('stock', '<', 10)
-            ->orderBy('stock')
+        $lowStockVariants = ProductVariant::with('product.category')
+            ->whereColumn('stock_quantity', '<=', 'min_stock_level')
+            ->where('stock_quantity', '>', 0)
+            ->orderBy('stock_quantity')
             ->get();
 
         $recentSales = Sale::withCount('items')
-            ->with(['items.product', 'items.unit'])
+            ->with(['items.variant.product', 'items.variant.unit'])
             ->latest()
             ->take(5)
             ->get();
 
         return view('livewire.dashboard', compact(
             'totalStock',
-            'lowStockProducts',
+            'lowStockVariants',
             'todaySales',
             'todayRevenue',
             'recentSales',

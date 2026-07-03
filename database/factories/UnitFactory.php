@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Product;
 use App\Models\Unit;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -14,28 +13,40 @@ class UnitFactory extends Factory
     public function definition(): array
     {
         return [
-            'product_id' => Product::factory(),
             'name' => fake()->word(),
-            'quantity' => 1,
-            'price' => fake()->randomFloat(2, 5, 500),
+            'is_sellable' => true,
         ];
     }
 
     public function bottle(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn () => [
             'name' => 'Bottle',
-            'quantity' => 1,
-            'price' => fake()->randomFloat(2, 5, 100),
+            'is_sellable' => true,
         ]);
     }
 
-    public function case(): static
+    public function can(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'name' => 'Case',
-            'quantity' => 12,
-            'price' => fake()->randomFloat(2, 50, 500),
+        return $this->state(fn () => [
+            'name' => 'Can',
+            'is_sellable' => true,
+        ]);
+    }
+
+    public function pack(): static
+    {
+        return $this->state(fn () => [
+            'name' => 'Pack',
+            'is_sellable' => true,
+        ]);
+    }
+
+    public function piece(): static
+    {
+        return $this->state(fn () => [
+            'name' => 'Piece',
+            'is_sellable' => true,
         ]);
     }
 }

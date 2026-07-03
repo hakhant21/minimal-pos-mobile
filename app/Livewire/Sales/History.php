@@ -31,7 +31,14 @@ class History extends Component
 
     public function deleteSale(): void
     {
-        $sale = Sale::findOrFail($this->deleteSaleId);
+        $sale = Sale::with('items.variant')->findOrFail($this->deleteSaleId);
+
+        foreach ($sale->items as $item) {
+            if ($item->variant) {
+                $item->variant->incrementStock($item->quantity, 'Sale deleted', $sale->id);
+            }
+        }
+
         $sale->items()->delete();
         $sale->delete();
 
@@ -43,7 +50,7 @@ class History extends Component
     public function render()
     {
         return view('livewire.sales.history', [
-            'sales' => Sale::with('items.product', 'items.unit')
+            'sales' => Sale::with('items.variant.product', 'items.variant.unit')
                 ->latest()
                 ->paginate(15),
         ]);

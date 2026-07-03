@@ -48,7 +48,7 @@
         class="rounded-xl border border-gray-200/80 bg-white p-5 shadow-sm dark:border-gray-700/80 dark:bg-gray-800/80">
         <form wire:submit="save" class="space-y-4">
             <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Name') }}</label>
+                <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Name') }}</label>
                 <input wire:model="name" type="text" id="name"
                     class="mt-1.5 block w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm shadow-sm transition placeholder:text-gray-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-indigo-500"
                     placeholder="{{ __('Category name') }}">
@@ -58,8 +58,8 @@
             </div>
 
             <div>
-                    <label for="description"
-                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Description') }}</label>
+                <label for="description"
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Description') }}</label>
                 <textarea wire:model="description" id="description" rows="2"
                     class="mt-1.5 block w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm shadow-sm transition placeholder:text-gray-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-indigo-500"
                     placeholder="{{ __('Optional description') }}"></textarea>
@@ -93,8 +93,7 @@
             <div class="flex-1 min-w-0">
                 <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $category->name }}</p>
                 @if ($category->description)
-                <p class="mt-0.5 truncate text-xs text-gray-500 dark:text-gray-400">{{ $category->description }}
-                </p>
+                <p class="mt-0.5 truncate text-xs text-gray-500 dark:text-gray-400">{{ $category->description }}</p>
                 @endif
             </div>
             <span
