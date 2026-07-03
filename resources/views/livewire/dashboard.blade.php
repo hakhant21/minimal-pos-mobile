@@ -129,8 +129,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 9v2m0 4h.01" />
                             </svg>
-                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ __('All products are well
-                                stocked.') }}</p>
+                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                                {{ __('All products are well stocked.') }}
+                            </p>
                         </td>
                     </tr>
                     @endforelse
