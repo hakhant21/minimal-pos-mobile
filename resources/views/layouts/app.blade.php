@@ -67,13 +67,13 @@
                                 :active="request()->routeIs('inventory.categories')" icon="folder">
                                 {{ __('Categories') }}
                             </x-nav-link>
-                            <x-nav-link href="{{ route('inventory.products') }}"
-                                :active="request()->routeIs('inventory.products')" icon="products">
-                                {{ __('Products') }}
-                            </x-nav-link>
                             <x-nav-link href="{{ route('inventory.units') }}"
                                 :active="request()->routeIs('inventory.units')" icon="list">
                                 {{ __('Units') }}
+                            </x-nav-link>
+                            <x-nav-link href="{{ route('inventory.products') }}"
+                                :active="request()->routeIs('inventory.products')" icon="products">
+                                {{ __('Products') }}
                             </x-nav-link>
                             <x-nav-link href="{{ route('inventory') }}" :active="request()->routeIs('inventory')"
                                 icon="inventory">
