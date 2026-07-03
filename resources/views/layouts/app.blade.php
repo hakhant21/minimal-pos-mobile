@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ __('BaeGyi Store') }}</title>
+    <title>{{ __(config('app.name'), 'မဟာထွန်း') }}</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
@@ -25,7 +25,9 @@
                                 d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
                     </button>
-                    <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ __('BaeGyi Store') }}</span>
+                    <span class="text-sm font-semibold text-gray-900 dark:text-white">
+                        {{ config('app.name'), 'မဟာထွန်း' }}
+                    </span>
                     <div class="w-9"></div>
                 </div>
             </header>
@@ -41,7 +43,7 @@
                             class="flex items-center justify-between border-b border-gray-200 px-5 py-4 dark:border-gray-800">
                             <div>
                                 <p class="text-base font-bold text-gray-900 dark:text-white">
-                                    {{ __('BaeGyi Store') }}
+                                    {{ config('app.name'), 'မဟာထွန်း' }}
                                 </p>
                                 <p class="text-xs text-gray-500 dark:text-gray-400">{{ __('POS System') }}</p>
                             </div>
