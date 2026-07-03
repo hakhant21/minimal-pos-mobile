@@ -95,7 +95,7 @@
                     <option value="">{{ __('Select unit') }}</option>
                     @foreach ($units as $u)
                     <option value="{{ $u['id'] }}">
-                        {{ $u['name'] }} — ${{ number_format($u['price'], 2) }}
+                        {{ $u['name'] }} — Ks {{ number_format($u['price'], 2) }}
                     </option>
                     @endforeach
                 </select>
@@ -181,7 +181,7 @@
                 <div class="flex-1 min-w-0">
                     <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ $item['product_name'] }}
                     </p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ $item['unit_name'] }} @ ${{
+                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ $item['unit_name'] }} @ Ks {{
                         number_format($item['unit_price'], 2) }}</p>
                 </div>
 
@@ -208,7 +208,7 @@
 
                 <div class="flex items-center gap-3">
                     <span class="text-sm font-bold text-gray-900 dark:text-white min-w-20 text-right">
-                        ${{ number_format($item['subtotal'], 2) }}
+                        Ks {{ number_format($item['subtotal'], 2) }}
                     </span>
                     <button type="button" wire:click="removeFromCart({{ $index }})"
                         class="flex h-7 w-7 items-center justify-center rounded-lg text-red-500 transition hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/30 dark:hover:text-red-400">
@@ -226,7 +226,7 @@
             class="flex items-center justify-between border-t border-gray-100 bg-gray-50/80 px-4 py-3 dark:border-gray-700/50 dark:bg-gray-800/50">
             <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('Total') }}</span>
             <span class="text-lg font-bold text-gray-900 dark:text-white">
-                ${{ number_format(array_sum(array_column($cart, 'subtotal')), 2) }}
+                Ks {{ number_format(array_sum(array_column($cart, 'subtotal')), 2) }}
             </span>
         </div>
     </div>
@@ -248,7 +248,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
-        {{ __('Complete Sale') }} — ${{ number_format(array_sum(array_column($cart, 'subtotal')), 2) }}
+        {{ __('Complete Sale') }} — Ks {{ number_format(array_sum(array_column($cart, 'subtotal')), 2) }}
     </button>
     @endif
 </div>

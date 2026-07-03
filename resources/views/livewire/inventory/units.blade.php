@@ -121,7 +121,7 @@
                                     <span>{{ __('Qty') }}: {{ $unit->quantity }}</span>
                                     <span>•</span>
                                     <span class="font-semibold text-amber-600 dark:text-amber-400">
-                                        ${{ number_format($unit->price, 2) }}
+                                        Ks {{ number_format($unit->price, 2) }}
                                     </span>
                                 </div>
                             </div>

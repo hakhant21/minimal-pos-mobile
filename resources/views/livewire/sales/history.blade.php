@@ -35,7 +35,7 @@
                 <div class="flex items-center justify-between gap-2">
                     <span class="text-xs text-gray-500 dark:text-gray-400">{{ $sale->created_at->format('M d, Y h:i A')
                         }}</span>
-                    <span class="text-base font-bold text-gray-900 dark:text-white">${{
+                    <span class="text-base font-bold text-gray-900 dark:text-white">Ks {{
                         number_format($sale->total_amount, 2) }}</span>
                 </div>
                 @if ($sale->notes)
@@ -59,10 +59,10 @@
                         <p class="text-xs text-gray-500 dark:text-gray-400">
                             {{ $item->quantity }} × {{ $item->unit->name ?? __('N/A') }}
                             <span class="text-gray-300 dark:text-gray-600">@</span>
-                            ${{ number_format($item->unit_price, 2) }}
+                            Ks {{ number_format($item->unit_price, 2) }}
                         </p>
                     </div>
-                    <span class="text-sm font-semibold text-gray-900 dark:text-white">${{ number_format($item->subtotal,
+                    <span class="text-sm font-semibold text-gray-900 dark:text-white">Ks {{ number_format($item->subtotal,
                         2) }}</span>
                 </div>
                 @endforeach
@@ -105,7 +105,7 @@
             <span class="text-gray-500 dark:text-gray-400 text-xl">{{ __('Total Revenue:') }}</span>
         </div>
         <span class="text-gray-500 dark:text-gray-400 font-bold text-xl">
-            ${{ number_format($sales->sum('total_amount'), 2) }}
+            Ks {{ number_format($sales->sum('total_amount'), 2) }}
         </span>
     </div>
 

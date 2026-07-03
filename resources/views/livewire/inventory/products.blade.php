@@ -114,9 +114,9 @@
                          <div class="flex items-center gap-3 rounded-lg bg-gray-50 px-3 py-2 text-sm dark:bg-gray-700/50">
                             <span class="font-medium text-gray-900 dark:text-white">{{ $unit['name'] }}</span>
                             <span class="text-gray-500 dark:text-gray-400">{{ __('Qty') }}: {{ $unit['quantity'] }}</span>
-                            <span class="font-mono text-emerald-600 dark:text-emerald-400">${{ number_format($unit['price'], 2) }}</span>
+                            <span class="font-mono text-emerald-600 dark:text-emerald-400">Ks {{ number_format($unit['price'], 2) }}</span>
                             @if (!empty($unit['cost_price']))
-                            <span class="font-mono text-gray-400">{{ __('Cost') }}: ${{ number_format($unit['cost_price'], 2) }}</span>
+                            <span class="font-mono text-gray-400">{{ __('Cost') }}: Ks {{ number_format($unit['cost_price'], 2) }}</span>
                             @endif
                         </div>
                         @endforeach
@@ -297,7 +297,7 @@
                                     class="inline-flex cursor-help items-center gap-1.5 rounded-lg bg-gray-100 px-2 py-1 text-[11px] font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">
                                     {{ $unit->name }}
                                     <span class="text-[10px] text-gray-400">({{ $unit->quantity }})</span>
-                                    <span class="text-[10px] text-emerald-600">${{ number_format($unit->price, 2)
+                                    <span class="text-[10px] text-emerald-600">Ks {{ number_format($unit->price, 2)
                                         }}</span>
                                 </span>
                                 {{-- Tooltip --}}
@@ -307,7 +307,7 @@
                                     <div class="mt-1 space-y-0.5">
                                         <div>{{ __('SKU') }}: {{ $unit->sku }}</div>
                                         <div>{{ __('Quantity') }}: {{ $unit->quantity }}</div>
-                                        <div>{{ __('Price') }}: ${{ number_format($unit->price, 2) }}</div>
+                                        <div>{{ __('Price') }}: Ks {{ number_format($unit->price, 2) }}</div>
                                     </div>
                                     <div
                                         class="absolute left-1/2 top-full -translate-x-1/2 -translate-y-1 border-4 border-transparent border-t-gray-900 dark:border-t-gray-800">

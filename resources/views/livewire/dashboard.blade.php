@@ -19,7 +19,7 @@
                     <p class="mt-3 text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">{{ __('Today Sales') }}</p>
                 <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-white">{{ $todaySales }}</p>
                 @if (isset($todayRevenue) && $todayRevenue > 0)
-                <p class="mt-0.5 text-xs font-medium text-amber-600 dark:text-amber-400">$
+                <p class="mt-0.5 text-xs font-medium text-amber-600 dark:text-amber-400">Ks
                     {{ number_format($todayRevenue, 2) }}</p>
                 @endif
             </div>
@@ -58,7 +58,7 @@
                 </div>
                     <p class="mt-3 text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">{{ __('Inventory Value') }}</p>
                 <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-white">
-                    ${{ number_format($inventoryValue, 2) }}</p>
+                    Ks {{ number_format($inventoryValue, 2) }}</p>
             </div>
         </div>
 
@@ -79,7 +79,7 @@
                 </div>
                     <p class="mt-3 text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">{{ __('Today Revenue') }}</p>
                 <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-white">
-                    ${{ number_format($todayRevenue, 2) }}</p>
+                    Ks {{ number_format($todayRevenue, 2) }}</p>
             </div>
         </div>
     </div>
@@ -153,7 +153,7 @@
                             </div>
                             <div class="flex-1 text-left">
                                 <p class="text-sm font-medium text-gray-900 dark:text-white">
-                                    ${{ number_format($sale->total_amount, 2) }}
+                                    Ks {{ number_format($sale->total_amount, 2) }}
                                 </p>
                                 <p class="text-xs text-gray-500 dark:text-gray-400">
                                     {{ $sale->created_at->format('M d, h:i A') }}
@@ -195,10 +195,10 @@
                             </div>
                             <div class="text-right">
                                 <p class="text-sm font-semibold text-amber-600 dark:text-amber-400">
-                                    ${{ number_format($item->subtotal, 2) }}
+                                    Ks {{ number_format($item->subtotal, 2) }}
                                 </p>
                                 <p class="text-xs text-gray-400">
-                                    ${{ number_format($item->unit->price ?? 0, 2) }} / {{ __('Unit') }}
+                                    Ks {{ number_format($item->unit->price ?? 0, 2) }} / {{ __('Unit') }}
                                 </p>
                             </div>
                         </div>

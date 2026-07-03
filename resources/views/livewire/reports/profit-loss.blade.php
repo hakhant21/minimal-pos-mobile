@@ -34,16 +34,16 @@
     <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <div class="rounded-2xl border border-gray-200/80 bg-white p-4 dark:border-gray-700/80 dark:bg-gray-800/80">
             <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">{{ __('Revenue') }}</p>
-            <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-white">${{ number_format($summary['total_revenue'], 2) }}</p>
+            <p class="mt-1 text-2xl font-bold text-gray-900 dark:text-white">Ks {{ number_format($summary['total_revenue'], 2) }}</p>
         </div>
         <div class="rounded-2xl border border-gray-200/80 bg-white p-4 dark:border-gray-700/80 dark:bg-gray-800/80">
             <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">{{ __('COGS') }}</p>
-            <p class="mt-1 text-2xl font-bold text-amber-600 dark:text-amber-400">${{ number_format($summary['total_cogs'], 2) }}</p>
+            <p class="mt-1 text-2xl font-bold text-amber-600 dark:text-amber-400">Ks {{ number_format($summary['total_cogs'], 2) }}</p>
         </div>
         <div class="rounded-2xl border border-gray-200/80 bg-white p-4 dark:border-gray-700/80 dark:bg-gray-800/80">
             <p class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">{{ __('Gross Profit') }}</p>
             <p class="mt-1 text-2xl font-bold {{ $summary['total_profit'] >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400' }}">
-                ${{ number_format($summary['total_profit'], 2) }}
+                Ks {{ number_format($summary['total_profit'], 2) }}
             </p>
         </div>
         <div class="rounded-2xl border border-gray-200/80 bg-white p-4 dark:border-gray-700/80 dark:bg-gray-800/80">
@@ -78,10 +78,10 @@
                             <span class="font-medium text-gray-900 dark:text-white">{{ $row['name'] }}</span>
                         </td>
                         <td class="px-4 py-2.5 text-right text-gray-700 dark:text-gray-300">{{ $row['total_qty'] }}</td>
-                        <td class="px-4 py-2.5 text-right font-mono text-gray-900 dark:text-white">${{ number_format($row['revenue'], 2) }}</td>
-                        <td class="px-4 py-2.5 text-right font-mono text-amber-600 dark:text-amber-400">${{ number_format($row['cogs'], 2) }}</td>
+                        <td class="px-4 py-2.5 text-right font-mono text-gray-900 dark:text-white">Ks {{ number_format($row['revenue'], 2) }}</td>
+                        <td class="px-4 py-2.5 text-right font-mono text-amber-600 dark:text-amber-400">Ks {{ number_format($row['cogs'], 2) }}</td>
                         <td class="px-4 py-2.5 text-right font-mono {{ $row['profit'] >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400' }}">
-                            ${{ number_format($row['profit'], 2) }}
+                            Ks {{ number_format($row['profit'], 2) }}
                         </td>
                         <td class="px-4 py-2.5 text-right">
                             <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold

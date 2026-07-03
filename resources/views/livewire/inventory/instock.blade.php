@@ -99,7 +99,7 @@
                         class="w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm shadow-sm transition focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
                         @foreach($product->units as $unit)
                         <option value="{{ $unit->id }}">
-                            {{ $unit->name }} - ${{ number_format($unit->price, 2) }}
+                            {{ $unit->name }} - Ks {{ number_format($unit->price, 2) }}
                             @if($unit->quantity > 1)
                             ({{ $unit->quantity }} {{ __('units per pack') }})
                             @endif
@@ -132,7 +132,7 @@
                         class="mt-3 flex items-center justify-between border-t border-gray-200 pt-3 dark:border-gray-600">
                         <span class="text-sm text-gray-600 dark:text-gray-400">{{ __('Selected Unit Price') }}</span>
                         <span class="text-sm font-bold text-gray-900 dark:text-white">
-                            ${{ number_format($selectedUnit->price, 2) }}
+                            Ks {{ number_format($selectedUnit->price, 2) }}
                             @if($selectedUnit->quantity > 1)
                             <span class="text-xs font-normal text-gray-500">({{ __('per') }} {{ $selectedUnit->quantity }}
                                 {{ __('units') }})</span>
@@ -150,7 +150,7 @@
                                 class="flex items-center justify-between rounded-lg bg-white px-3 py-2 text-sm dark:bg-gray-800 {{ $unit_id == $unit->id ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-900/20' : '' }}">
                                 <span class="text-gray-700 dark:text-gray-300">{{ $unit->name }}</span>
                                 <div class="text-right">
-                                    <span class="font-semibold text-gray-900 dark:text-white">${{
+                                    <span class="font-semibold text-gray-900 dark:text-white">Ks {{
                                         number_format($unit->price, 2) }}</span>
                                     @if($unit->quantity > 1)
                                     <span class="ml-1 text-xs text-gray-500">({{ $unit->quantity }} {{ __('pcs') }})</span>
@@ -189,11 +189,11 @@
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-600 dark:text-gray-400">{{ __('Total Value:') }}</span>
                         <span class="font-bold text-gray-900 dark:text-white">
-                            ${{ number_format($selectedUnit->price * $quantity, 2) }}
+                            Ks {{ number_format($selectedUnit->price * $quantity, 2) }}
                         </span>
                     </div>
                     <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        <span>{{ $quantity }} × ${{ number_format($selectedUnit->price, 2) }}</span>
+                        <span>{{ $quantity }} × Ks {{ number_format($selectedUnit->price, 2) }}</span>
                         <span>per {{ $selectedUnit->name }}</span>
                     </div>
                 </div>

@@ -318,7 +318,7 @@ it('renders cart section after adding items', function () {
         ->assertSee('Cola')
         ->assertSeeHtml('Cart (1')
         ->assertSee('Bottle')
-        ->assertSeeHtml('$7.50')
+        ->assertSeeHtml('Ks 7.50')
         ->assertSee('Complete Sale')
         ->assertSee('Total');
 });
