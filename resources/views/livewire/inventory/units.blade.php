@@ -149,7 +149,9 @@
 
                 <form wire:submit="save" class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('Unit Name') }}</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                            {{ __('Unit Name') }}
+                        </label>
                         <input wire:model="name" type="text"
                             class="w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                             placeholder="{{ __('e.g. Bottle, Case, Can') }}">
@@ -162,8 +164,9 @@
                         <input wire:model="is_sellable" type="checkbox" id="is_sellable"
                             class="rounded border-gray-300 text-amber-600 focus:ring-amber-500 dark:border-gray-600 dark:bg-gray-700"
                             value="1">
-                        <label for="is_sellable" class="text-sm text-gray-700 dark:text-gray-300">{{ __('Sellable unit')
-                            }}</label>
+                        <label for="is_sellable" class="text-sm text-gray-700 dark:text-gray-300">
+                            {{ __('Sellable unit')}}
+                        </label>
                     </div>
 
                     <div class="flex gap-3 pt-2">
