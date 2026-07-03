@@ -227,6 +227,7 @@
                             @enderror
                         </div>
                     </div>
+                @endif
 
                 <div class="flex gap-3 pt-1">
                     <button type="button" wire:click="save"
@@ -238,7 +239,6 @@
                         {{ __('Cancel') }}
                     </button>
                 </div>
-            @endif
         @endif
         </form>
     </div>
