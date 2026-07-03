@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
+            $table->string('customer_name')->nullable();
             $table->string('invoice_number')->unique();
             $table->foreignId('user_id')->constrained();
 

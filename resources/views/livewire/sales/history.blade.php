@@ -33,8 +33,11 @@
             </div>
             <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between gap-2">
-                    <span class="text-xs text-gray-500 dark:text-gray-400">{{ $sale->created_at->format('M d, Y h:i A')
-                        }}
+                    <span class="text-xs text-gray-500 dark:text-gray-400">
+                        {{ $sale->created_at->format('M d, Y h:i A') }}
+                        @if ($sale->customer_name)
+                        <span class="mx-1">•</span> {{ __('Customer') }}: {{ $sale->customer_name }}
+                        @endif
                         <span class="ml-1 text-gray-400">• {{ $sale->payment_method }}</span>
                     </span>
                     <span class="text-base font-bold text-gray-900 dark:text-white">Ks {{

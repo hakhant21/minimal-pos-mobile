@@ -26,6 +26,8 @@ class CreateSale extends Component
 
     public array $cart = [];
 
+    public ?string $customerName = null;
+
     public ?string $notes = null;
 
     public string $paymentMethod = 'cash';
@@ -40,6 +42,7 @@ class CreateSale extends Component
     {
         $this->itemQuantity = 1;
         $this->cart = [];
+        $this->customerName = null;
         $this->showProductDropdown = false;
         $this->paymentMethod = 'cash';
     }
@@ -208,6 +211,7 @@ class CreateSale extends Component
         $sale = Sale::create([
             'invoice_number' => Sale::generateInvoiceNumber(),
             'user_id' => auth()->id() ?? 1,
+            'customer_name' => $this->customerName,
             'subtotal' => $subtotal,
             'discount' => $discount,
             'tax' => $tax,
@@ -236,7 +240,7 @@ class CreateSale extends Component
             }
         }
 
-        $this->reset(['cart', 'notes', 'productSearch']);
+        $this->reset(['cart', 'customerName', 'notes', 'productSearch']);
         $this->showProductDropdown = false;
         $this->itemQuantity = 1;
 

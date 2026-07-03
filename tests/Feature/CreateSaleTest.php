@@ -208,14 +208,17 @@ it('completes sale and creates records', function () {
         ->set('selectedVariantId', $this->variantBottle->id)
         ->set('itemQuantity', 2)
         ->call('addToCart')
+        ->set('customerName', 'John Doe')
         ->set('notes', 'Test sale')
         ->call('completeSale')
         ->assertSet('cart', [])
+        ->assertSet('customerName', null)
         ->assertSet('notes', null);
 
     $this->assertDatabaseHas('sales', [
         'subtotal' => 5.00,
         'total' => 5.00,
+        'customer_name' => 'John Doe',
         'notes' => 'Test sale',
         'payment_method' => 'cash',
     ]);

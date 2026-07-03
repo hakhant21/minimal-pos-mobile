@@ -49,7 +49,8 @@
 
         <div class="space-y-4">
             <div class="relative" x-data="{ open: false }" x-on:click.away="open = false">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('Product') }}</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('Product')
+                    }}</label>
                 <input type="text" wire:model.live="productSearch" x-on:focus="open = true" x-on:input="open = true"
                     placeholder="{{ __('Search product...') }}"
                     class="w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm shadow-sm transition placeholder:text-gray-400 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500">
@@ -64,7 +65,8 @@
                         class="px-4 py-2.5 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors {{ $selectedProductId == $product->id ? 'bg-emerald-50 dark:bg-emerald-900/20' : '' }}">
                         <div class="flex justify-between items-center">
                             <span class="text-sm font-medium text-gray-900 dark:text-white">{{ $product->name }}</span>
-                            <span class="text-xs text-gray-500 dark:text-gray-400">{{ $product->variants->sum('stock_quantity') }} {{ __('in stock') }}</span>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">{{
+                                $product->variants->sum('stock_quantity') }} {{ __('in stock') }}</span>
                         </div>
                     </div>
                     @endforeach
@@ -82,16 +84,17 @@
 
             @if(count($variants) > 0)
             <div>
-                <label for="variant" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Variant') }}</label>
+                <label for="variant" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Variant')
+                    }}</label>
                 <select wire:model.live="selectedVariantId" id="variant"
                     class="mt-1.5 block w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm shadow-sm transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-emerald-500">
                     <option value="">{{ __('Select variant') }}</option>
                     @foreach ($variants as $v)
                     <option value="{{ $v['id'] }}">
-                        {{ $v['unit_name'] }} @if($v['units_per_package'])({{ $v['units_per_package'] }})@endif — Ks {{ number_format($v['price'], 2) }}
-                        @if($v['stock'] <= 0) ({{ __('Out of stock') }}) @endif
-                    </option>
-                    @endforeach
+                        {{ $v['unit_name'] }} @if($v['units_per_package'])({{ $v['units_per_package'] }})@endif — Ks {{
+                        number_format($v['price'], 2) }}
+                        @if($v['stock'] <= 0) ({{ __('Out of stock') }}) @endif </option>
+                            @endforeach
                 </select>
                 @error('selectedVariantId')
                 <p class="mt-1.5 text-xs font-medium text-red-600">{{ $message }}</p>
@@ -110,7 +113,8 @@
             @endif
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('Quantity') }}</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('Quantity')
+                    }}</label>
                 <div class="flex items-center gap-2">
                     <button type="button" wire:click="decrementQuantity" wire:loading.attr="disabled"
                         class="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-700 transition hover:bg-gray-50 hover:border-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">
@@ -157,7 +161,8 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
-                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('Cart') }} ({{ count($cart) }}
+                <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">{{ __('Cart') }} ({{ count($cart)
+                    }}
                     {{ __('items') }})</span>
             </div>
         </div>
@@ -223,30 +228,42 @@
 
     <div
         class="rounded-xl border border-gray-200/80 bg-white p-5 shadow-sm dark:border-gray-700/80 dark:bg-gray-800/80">
-        <label for="notes" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Notes') }} <span
-                class="text-xs font-normal text-gray-500">{{ __('(optional)') }}</span></label>
-        <textarea wire:model="notes" id="notes" rows="2"
+        <label for="customerName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Customer
+            name') }} <span class="text-xs font-normal text-gray-500">{{ __('(optional)') }}</span></label>
+        <input wire:model="customerName" id="customerName" type="text"
             class="mt-1.5 block w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm shadow-sm transition placeholder:text-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-blue-500"
-            placeholder="{{ __('Add any notes for this sale...') }}"></textarea>
+            placeholder="{{ __('Enter customer name') }}">
+        @error('customerName')
+        <p class="mt-1.5 text-xs font-medium text-red-600">{{ $message }}</p>
+        @enderror
     </div>
 
     <div
         class="rounded-xl border border-gray-200/80 bg-white p-5 shadow-sm dark:border-gray-700/80 dark:bg-gray-800/80">
-        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ __('Payment Method') }}</label>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{ __('Payment Method')
+            }}</label>
         <div class="grid grid-cols-2 gap-3">
             <label wire:click="$set('paymentMethod', 'cash')"
                 class="flex items-center justify-center gap-2 rounded-xl border-2 p-3 cursor-pointer transition-all {{ $paymentMethod === 'cash' ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 dark:border-emerald-600' : 'border-gray-200 hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-600' }}">
-                <svg class="h-5 w-5 {{ $paymentMethod === 'cash' ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                <svg class="h-5 w-5 {{ $paymentMethod === 'cash' ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400' }}"
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
-                <span class="text-sm font-medium {{ $paymentMethod === 'cash' ? 'text-emerald-800 dark:text-emerald-300' : 'text-gray-600 dark:text-gray-400' }}">{{ __('Cash') }}</span>
+                <span
+                    class="text-sm font-medium {{ $paymentMethod === 'cash' ? 'text-emerald-800 dark:text-emerald-300' : 'text-gray-600 dark:text-gray-400' }}">{{
+                    __('Cash') }}</span>
             </label>
             <label wire:click="$set('paymentMethod', 'kbzpay')"
                 class="flex items-center justify-center gap-2 rounded-xl border-2 p-3 cursor-pointer transition-all {{ $paymentMethod === 'kbzpay' ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 dark:border-emerald-600' : 'border-gray-200 hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-600' }}">
-                <svg class="h-5 w-5 {{ $paymentMethod === 'kbzpay' ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                <svg class="h-5 w-5 {{ $paymentMethod === 'kbzpay' ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400' }}"
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                 </svg>
-                <span class="text-sm font-medium {{ $paymentMethod === 'kbzpay' ? 'text-emerald-800 dark:text-emerald-300' : 'text-gray-600 dark:text-gray-400' }}">{{ __('KBZPay') }}</span>
+                <span
+                    class="text-sm font-medium {{ $paymentMethod === 'kbzpay' ? 'text-emerald-800 dark:text-emerald-300' : 'text-gray-600 dark:text-gray-400' }}">{{
+                    __('KBZPay') }}</span>
             </label>
         </div>
     </div>
