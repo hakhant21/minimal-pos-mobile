@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\Sale;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,7 +19,6 @@ class SaleFactory extends Factory
 
         return [
             'invoice_number' => Sale::generateInvoiceNumber(),
-            'user_id' => User::factory(),
             'customer_name' => fake()->optional()->name(),
             'subtotal' => $subtotal,
             'discount' => $discount,

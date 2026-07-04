@@ -20,15 +20,6 @@ class Categories extends Component
     #[Rule('required|max:255')]
     public string $name = '';
 
-    #[Rule('nullable|string|max:1000')]
-    public ?string $description = null;
-
-    #[Rule('nullable|string|max:50')]
-    public ?string $icon = null;
-
-    #[Rule('nullable|string|max:7')]
-    public ?string $color = null;
-
     public bool $is_active = true;
 
     public function loadMore(): void
@@ -49,9 +40,6 @@ class Categories extends Component
         $this->showForm = true;
         $this->editingCategoryId = $category->id;
         $this->name = $category->name;
-        $this->description = $category->description;
-        $this->icon = $category->icon;
-        $this->color = $category->color;
         $this->is_active = $category->is_active;
     }
 
@@ -62,9 +50,6 @@ class Categories extends Component
         $data = [
             'name' => $this->name,
             'slug' => Str::slug($this->name),
-            'description' => $this->description,
-            'icon' => $this->icon,
-            'color' => $this->color,
             'is_active' => $this->is_active,
         ];
 
@@ -115,9 +100,6 @@ class Categories extends Component
         $this->showForm = false;
         $this->editingCategoryId = null;
         $this->name = '';
-        $this->description = null;
-        $this->icon = null;
-        $this->color = null;
         $this->is_active = true;
     }
 

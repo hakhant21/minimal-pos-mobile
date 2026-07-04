@@ -48,6 +48,8 @@
         </div>
 
         <div class="space-y-4">
+
+
             <div class="relative" x-data="{ open: false }" x-on:click.away="open = false">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('Product')
                     }}</label>
@@ -91,8 +93,10 @@
                     <option value="">{{ __('Select variant') }}</option>
                     @foreach ($variants as $v)
                     <option value="{{ $v['id'] }}">
-                        {{ $v['unit_name'] }} @if($v['units_per_package'])({{ $v['units_per_package'] }})@endif — Ks {{
-                        number_format($v['price'], 2) }}
+                        {{ $v['unit_name'] }}@if($v['units_per_package']) ({{ $v['units_per_package'] }})@endif
+                        — Ks {{ number_format($v['package_price'], 2) }}
+                        @if($v['has_package']) | {{ __('Per Unit Price') }}: Ks {{ number_format($v['per_unit_price'], 2) }}
+                        @endif
                         @if($v['stock'] <= 0) ({{ __('Out of stock') }}) @endif </option>
                             @endforeach
                 </select>
@@ -100,6 +104,47 @@
                 <p class="mt-1.5 text-xs font-medium text-red-600">{{ $message }}</p>
                 @enderror
             </div>
+
+            @if($selectedVariantId)
+            @php
+            $selectedV = collect($variants)->firstWhere('id', $selectedVariantId);
+            @endphp
+            @if($selectedV && $selectedV['has_package'])
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{{ __('Sell as')
+                    }}</label>
+                <div class="grid grid-cols-2 gap-3">
+                    <label wire:click="$set('sellType', 'single')"
+                        class="flex items-center justify-center gap-2 rounded-xl border-2 p-3 cursor-pointer transition-all {{ $sellType === 'single' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-600' : 'border-gray-200 hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-600' }}">
+                        <div class="text-center">
+                            <span
+                                class="text-sm font-medium {{ $sellType === 'single' ? 'text-blue-800 dark:text-blue-300' : 'text-gray-600 dark:text-gray-400' }}">
+                                {{ __('Single Unit') }}
+                            </span>
+                            <span
+                                class="block text-xs {{ $sellType === 'single' ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500' }}">
+                                Ks {{ number_format($selectedV['per_unit_price'], 2) }}/{{ $selectedV['unit_name'] }}
+                            </span>
+                        </div>
+                    </label>
+                    <label wire:click="$set('sellType', 'package')"
+                        class="flex items-center justify-center gap-2 rounded-xl border-2 p-3 cursor-pointer transition-all {{ $sellType === 'package' ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 dark:border-emerald-600' : 'border-gray-200 hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-600' }}">
+                        <div class="text-center">
+                            <span
+                                class="text-sm font-medium {{ $sellType === 'package' ? 'text-emerald-800 dark:text-emerald-300' : 'text-gray-600 dark:text-gray-400' }}">
+                                {{ __('Package') }}
+                            </span>
+                            <span
+                                class="block text-xs {{ $sellType === 'package' ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400 dark:text-gray-500' }}">
+                                Ks {{ number_format($selectedV['package_price'], 2) }}
+                            </span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+            @endif
+            @endif
+
             @elseif($selectedProductId)
             <div class="rounded-lg bg-yellow-50 p-3 text-sm text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300">
                 <div class="flex items-center gap-2">
@@ -177,8 +222,18 @@
                 <div class="flex-1 min-w-0">
                     <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ $item['product_name'] }}
                     </p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ $item['variant_name'] }} @ Ks {{
-                        number_format($item['unit_price'], 2) }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                        {{ $item['variant_name'] }} @ Ks {{ number_format($item['unit_price'], 2) }}
+                        @if($item['sell_type'] === 'single')
+                        <span
+                            class="inline-flex items-center rounded bg-blue-100 px-1 py-0.5 text-[10px] font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 ml-1">{{
+                            __('Single Unit') }}</span>
+                        @else
+                        <span
+                            class="inline-flex items-center rounded bg-emerald-100 px-1 py-0.5 text-[10px] font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 ml-1">{{
+                            __('Package') }}</span>
+                        @endif
+                    </p>
                 </div>
 
                 <div class="flex items-center gap-2">
@@ -228,8 +283,8 @@
 
     <div
         class="rounded-xl border border-gray-200/80 bg-white p-5 shadow-sm dark:border-gray-700/80 dark:bg-gray-800/80">
-        <label for="customerName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Customer
-            name') }} <span class="text-xs font-normal text-gray-500">{{ __('(optional)') }}</span></label>
+        <label for="customerName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            {{ __('Customer') }} <span class="text-xs font-normal text-gray-500">{{ __('(optional)') }}</span></label>
         <input wire:model="customerName" id="customerName" type="text"
             class="mt-1.5 block w-full rounded-xl border border-gray-300 bg-white px-3.5 py-2.5 text-sm shadow-sm transition placeholder:text-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-blue-500"
             placeholder="{{ __('Enter customer name') }}">

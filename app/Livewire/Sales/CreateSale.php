@@ -24,6 +24,8 @@ class CreateSale extends Component
     #[Rule('required|integer|min:1')]
     public ?int $itemQuantity = 1;
 
+    public string $sellType = 'package';
+
     public array $cart = [];
 
     public ?string $customerName = null;
@@ -45,6 +47,7 @@ class CreateSale extends Component
         $this->customerName = null;
         $this->showProductDropdown = false;
         $this->paymentMethod = 'cash';
+        $this->sellType = 'package';
     }
 
     public function updatedProductSearch(): void
@@ -55,7 +58,13 @@ class CreateSale extends Component
     public function updatedSelectedProductId(): void
     {
         $this->selectedVariantId = null;
+        $this->sellType = 'package';
         $this->loadProductVariants();
+    }
+
+    public function updatedSelectedVariantId(): void
+    {
+        $this->sellType = 'package';
     }
 
     public function selectProduct(int $productId): void
@@ -63,6 +72,7 @@ class CreateSale extends Component
         $this->selectedProductId = $productId;
         $this->selectedVariantId = null;
         $this->showProductDropdown = false;
+        $this->sellType = 'package';
 
         $product = Product::find($this->selectedProductId);
         if ($product) {
@@ -83,12 +93,17 @@ class CreateSale extends Component
                 ->get();
 
             foreach ($variants as $variant) {
+                $hasPackage = (int) $variant->units_per_package > 1;
+                $perUnitPrice = (float) ($variant->per_unit_price ?? $variant->selling_price);
+
                 $this->variants[] = [
                     'id' => $variant->id,
                     'display_name' => $variant->display_name,
                     'unit_name' => $variant->unit->name,
                     'units_per_package' => $variant->units_per_package,
-                    'price' => (float) $variant->current_price,
+                    'package_price' => (float) $variant->selling_price,
+                    'per_unit_price' => $perUnitPrice,
+                    'has_package' => $hasPackage,
                     'stock' => $variant->stock_quantity,
                     'stock_status' => $variant->stock_status,
                 ];
@@ -114,12 +129,25 @@ class CreateSale extends Component
 
         $variant = ProductVariant::with('product', 'unit')->findOrFail($this->selectedVariantId);
 
-        $unitPrice = (float) $variant->current_price;
+        $isPackage = $this->sellType === 'package';
+        $unitsPerPackage = (int) $variant->units_per_package;
+        $hasPackage = $unitsPerPackage > 1;
+
+        if ($isPackage && $hasPackage) {
+            $unitPrice = (float) $variant->selling_price;
+            $stockDeducted = $unitsPerPackage * $this->itemQuantity;
+            $label = $variant->product->name.' — '.$unitsPerPackage.' '.$variant->unit->name.'/pkg';
+        } else {
+            $unitPrice = (float) ($variant->per_unit_price ?? $variant->selling_price);
+            $stockDeducted = $this->itemQuantity;
+            $label = $variant->product->name.' — 1 '.$variant->unit->name;
+        }
+
         $totalPrice = $unitPrice * $this->itemQuantity;
 
         $existingIndex = null;
         foreach ($this->cart as $index => $item) {
-            if ($item['variant_id'] === $variant->id) {
+            if ($item['variant_id'] === $variant->id && $item['sell_type'] === ($isPackage ? 'package' : 'single')) {
                 $existingIndex = $index;
                 break;
             }
@@ -133,8 +161,10 @@ class CreateSale extends Component
                 'variant_id' => $variant->id,
                 'product_id' => $variant->product_id,
                 'product_name' => $variant->product->name,
-                'variant_name' => $variant->display_name,
+                'variant_name' => $label,
                 'unit_name' => $variant->unit->name,
+                'sell_type' => $isPackage ? 'package' : 'single',
+                'units_per_package' => $hasPackage ? $unitsPerPackage : 1,
                 'unit_price' => $unitPrice,
                 'quantity' => $this->itemQuantity,
                 'total_price' => $totalPrice,
@@ -144,6 +174,7 @@ class CreateSale extends Component
         $this->reset(['selectedProductId', 'selectedVariantId', 'variants', 'productSearch']);
         $this->showProductDropdown = false;
         $this->itemQuantity = 1;
+        $this->sellType = 'package';
 
         session()->flash('message', 'Item added to cart successfully!');
     }
@@ -192,6 +223,8 @@ class CreateSale extends Component
             $this->cart[$index]['unit_name'] = (string) ($item['unit_name'] ?? '');
             $this->cart[$index]['variant_id'] = (int) ($item['variant_id'] ?? 0);
             $this->cart[$index]['product_id'] = (int) ($item['product_id'] ?? 0);
+            $this->cart[$index]['sell_type'] = (string) ($item['sell_type'] ?? 'package');
+            $this->cart[$index]['units_per_package'] = (int) ($item['units_per_package'] ?? 1);
         }
     }
 
@@ -210,7 +243,6 @@ class CreateSale extends Component
 
         $sale = Sale::create([
             'invoice_number' => Sale::generateInvoiceNumber(),
-            'user_id' => auth()->id() ?? 1,
             'customer_name' => $this->customerName,
             'subtotal' => $subtotal,
             'discount' => $discount,
@@ -220,7 +252,6 @@ class CreateSale extends Component
             'amount_paid' => $total,
             'change_amount' => 0,
             'notes' => $this->notes,
-            'completed_at' => now(),
         ]);
 
         foreach ($this->cart as $item) {
@@ -233,10 +264,13 @@ class CreateSale extends Component
                 'tax_amount' => 0,
             ]);
 
-            // Decrement stock and log movement
             $variant = ProductVariant::find($item['variant_id']);
             if ($variant) {
-                $variant->decrementStock($item['quantity'], 'Sale completed', $sale->id);
+                $stockToDeduct = $item['sell_type'] === 'package'
+                    ? $item['units_per_package'] * $item['quantity']
+                    : $item['quantity'];
+
+                $variant->decrementStock($stockToDeduct, 'Sale completed', $sale->id);
             }
         }
 

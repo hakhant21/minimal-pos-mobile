@@ -23,7 +23,7 @@ class Dashboard extends Component
     {
         $totalStock = ProductVariant::sum('stock_quantity');
         $todaySales = Sale::whereDate('created_at', today())->count();
-        $todayRevenue = Sale::whereDate('created_at', today())->completed()->sum('total');
+        $todayRevenue = Sale::whereDate('created_at', today())->sum('total');
 
         $inventoryValue = ProductVariant::where('stock_quantity', '>', 0)
             ->selectRaw('SUM(stock_quantity * cost_price) as total_value')

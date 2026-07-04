@@ -12,29 +12,18 @@ return new class extends Migration
             $table->id();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->foreignId('unit_id')->constrained();
-
             $table->integer('units_per_package')->nullable();
-            $table->decimal('package_weight', 8, 2)->nullable();
-
             $table->decimal('cost_price', 12, 2);
             $table->decimal('selling_price', 12, 2);
-            $table->decimal('promo_price', 12, 2)->nullable();
-            $table->timestamp('promo_start')->nullable();
-            $table->timestamp('promo_end')->nullable();
-
+            $table->decimal('per_unit_price', 12, 2)->nullable();
             $table->integer('stock_quantity')->default(0);
             $table->integer('min_stock_level')->default(5);
             $table->integer('max_stock_level')->nullable();
-            $table->string('location')->nullable();
-
-            $table->string('barcode')->nullable()->unique();
-            $table->string('image_url')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
 
             $table->index(['product_id', 'unit_id']);
-            $table->index('barcode');
             $table->index('stock_quantity');
         });
     }

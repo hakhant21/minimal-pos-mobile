@@ -67,12 +67,6 @@
                         <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $unit->name }}</p>
 
                     </div>
-                    <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
-                        {{ $unit->name }}
-                        @if(!$unit->is_sellable)
-                        <span class="ml-2 text-amber-600">({{ __('Not sellable') }})</span>
-                        @endif
-                    </p>
                 </div>
                 <div class="flex items-center gap-1 shrink-0">
                     <button wire:click="edit({{ $unit->id }})"
@@ -158,15 +152,6 @@
                         @error('name')
                         <p class="mt-1.5 text-xs font-medium text-red-600">{{ $message }}</p>
                         @enderror
-                    </div>
-
-                    <div class="flex items-center gap-2">
-                        <input wire:model="is_sellable" type="checkbox" id="is_sellable"
-                            class="rounded border-gray-300 text-amber-600 focus:ring-amber-500 dark:border-gray-600 dark:bg-gray-700"
-                            value="1">
-                        <label for="is_sellable" class="text-sm text-gray-700 dark:text-gray-300">
-                            {{ __('Sellable unit')}}
-                        </label>
                     </div>
 
                     <div class="flex gap-3 pt-2">

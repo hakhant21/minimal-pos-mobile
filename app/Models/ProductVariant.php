@@ -17,18 +17,12 @@ class ProductVariant extends Model
         'product_id',
         'unit_id',
         'units_per_package',
-        'package_weight',
         'cost_price',
         'selling_price',
-        'promo_price',
-        'promo_start',
-        'promo_end',
+        'per_unit_price',
         'stock_quantity',
         'min_stock_level',
         'max_stock_level',
-        'location',
-        'barcode',
-        'image_url',
         'is_active',
     ];
 
@@ -38,14 +32,11 @@ class ProductVariant extends Model
             'is_active' => 'boolean',
             'cost_price' => 'decimal:2',
             'selling_price' => 'decimal:2',
-            'promo_price' => 'decimal:2',
-            'promo_start' => 'datetime',
-            'promo_end' => 'datetime',
+            'per_unit_price' => 'decimal:2',
             'units_per_package' => 'integer',
             'stock_quantity' => 'integer',
             'min_stock_level' => 'integer',
             'max_stock_level' => 'integer',
-            'package_weight' => 'decimal:2',
         ];
     }
 
@@ -54,7 +45,6 @@ class ProductVariant extends Model
         'stock_status',
         'stock_status_label',
         'stock_status_color',
-        'current_price',
     ];
 
     public function product(): BelongsTo
@@ -70,34 +60,6 @@ class ProductVariant extends Model
     public function saleItems(): HasMany
     {
         return $this->hasMany(SaleItem::class);
-    }
-
-    public function getCurrentPriceAttribute(): float
-    {
-        if ($this->promo_price && $this->isPromoActive()) {
-            return (float) $this->promo_price;
-        }
-
-        return (float) $this->selling_price;
-    }
-
-    public function isPromoActive(): bool
-    {
-        if (! $this->promo_price) {
-            return false;
-        }
-
-        $now = now();
-
-        if ($this->promo_start && $this->promo_start->gt($now)) {
-            return false;
-        }
-
-        if ($this->promo_end && $this->promo_end->lt($now)) {
-            return false;
-        }
-
-        return true;
     }
 
     public function getDisplayNameAttribute(): string
@@ -188,7 +150,7 @@ class ProductVariant extends Model
             $q->whereHas('product', function ($productQuery) use ($search) {
                 $productQuery->where('name', 'like', "%{$search}%")
                     ->orWhere('brand', 'like', "%{$search}%");
-            })->orWhere('barcode', 'like', "%{$search}%");
+            });
         });
     }
 }

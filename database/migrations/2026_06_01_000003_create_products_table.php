@@ -13,13 +13,8 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->string('sku')->unique();
-            $table->string('barcode')->nullable()->unique();
-            $table->text('description')->nullable();
             $table->string('brand')->nullable();
-            $table->string('image_url')->nullable();
-            $table->decimal('weight', 8, 2)->nullable();
             $table->boolean('is_active')->default(true);
-            $table->boolean('is_taxable')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });

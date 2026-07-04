@@ -13,24 +13,12 @@ class Unit extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'is_sellable',
+        'name',
     ];
-
-    protected function casts(): array
-    {
-        return [
-            'is_sellable' => 'boolean',
-        ];
-    }
 
     public function variants(): HasMany
     {
         return $this->hasMany(ProductVariant::class);
-    }
-
-    public function scopeSellable($query)
-    {
-        return $query->where('is_sellable', true);
     }
 
     public function scopeOrdered($query)

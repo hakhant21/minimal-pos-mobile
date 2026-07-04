@@ -11,8 +11,6 @@ return new class extends Migration
         Schema::create('units', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->boolean('is_sellable')->default(true);
-
             $table->timestamps();
         });
     }

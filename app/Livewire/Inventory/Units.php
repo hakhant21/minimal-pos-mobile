@@ -19,9 +19,6 @@ class Units extends Component
     #[Rule('required|max:255')]
     public string $name = '';
 
-    #[Rule('boolean')]
-    public bool $is_sellable = true;
-
     public string $search = '';
 
     public function loadMore(): void
@@ -42,7 +39,6 @@ class Units extends Component
         $this->showForm = true;
         $this->editingUnitId = $unit->id;
         $this->name = $unit->name;
-        $this->is_sellable = $unit->is_sellable;
     }
 
     public function save(): void
@@ -52,13 +48,11 @@ class Units extends Component
         if ($this->editingUnitId) {
             Unit::findOrFail($this->editingUnitId)->update([
                 'name' => $this->name,
-                'is_sellable' => $this->is_sellable,
             ]);
             session()->flash('message', 'Unit updated successfully.');
         } else {
             Unit::create([
                 'name' => $this->name,
-                'is_sellable' => $this->is_sellable,
             ]);
             session()->flash('message', 'Unit created successfully.');
         }
@@ -102,7 +96,6 @@ class Units extends Component
         $this->showForm = false;
         $this->editingUnitId = null;
         $this->name = '';
-        $this->is_sellable = true;
     }
 
     public function render()

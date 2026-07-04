@@ -15,16 +15,13 @@ class Product extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'category_id', 'name', 'sku', 'barcode', 'description',
-        'brand', 'image_url', 'weight', 'is_active', 'is_taxable',
+        'category_id', 'name', 'sku', 'brand', 'is_active',
     ];
 
     protected function casts(): array
     {
         return [
             'is_active' => 'boolean',
-            'is_taxable' => 'boolean',
-            'weight' => 'decimal:2',
         ];
     }
 
@@ -66,8 +63,7 @@ class Product extends Model
         return $query->where(function ($q) use ($search) {
             $q->where('name', 'like', "%{$search}%")
                 ->orWhere('sku', 'like', "%{$search}%")
-                ->orWhere('brand', 'like', "%{$search}%")
-                ->orWhere('barcode', 'like', "%{$search}%");
+                ->orWhere('brand', 'like', "%{$search}%");
         });
     }
 }

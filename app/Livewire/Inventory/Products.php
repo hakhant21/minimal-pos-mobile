@@ -5,6 +5,7 @@ namespace App\Livewire\Inventory;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Unit;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
 
@@ -18,10 +19,6 @@ class Products extends Component
 
     public ?int $deletingProductId = null;
 
-    public ?int $createdProductId = null;
-
-    public array $createdProductVariants = [];
-
     // Product fields
     #[Rule('required|exists:categories,id')]
     public ?int $category_id = null;
@@ -29,67 +26,13 @@ class Products extends Component
     #[Rule('required|max:255')]
     public string $name = '';
 
-    #[Rule('nullable|string|max:1000')]
-    public ?string $description = null;
-
     #[Rule('nullable|string|max:255')]
     public ?string $brand = null;
 
-    public bool $is_taxable = true;
-
-    #[Rule('nullable|string|max:255')]
-    public ?string $barcode = null;
-
-    #[Rule('nullable|string|max:255')]
-    public ?string $image_url = null;
-
-    #[Rule('nullable|numeric|min:0')]
-    public ?float $weight = null;
-
     public bool $is_active = true;
 
-    // Variant fields
-    #[Rule('required|exists:units,id')]
-    public ?int $variantUnitId = null;
-
-    #[Rule('nullable|integer|min:1')]
-    public ?int $variantUnitsPerPackage = null;
-
-    #[Rule('required|numeric|min:0')]
-    public float $variantSellingPrice = 0;
-
-    #[Rule('required|numeric|min:0')]
-    public float $variantCostPrice = 0;
-
-    #[Rule('nullable|integer|min:0')]
-    public ?int $variantStockQuantity = 0;
-
-    #[Rule('nullable|integer|min:0')]
-    public ?int $variantMinStockLevel = 5;
-
-    #[Rule('nullable|numeric|min:0')]
-    public ?float $variantPackageWeight = null;
-
-    #[Rule('nullable|numeric|min:0')]
-    public ?float $variantPromoPrice = null;
-
-    public ?string $variantPromoStart = null;
-
-    public ?string $variantPromoEnd = null;
-
-    #[Rule('nullable|integer|min:0')]
-    public ?int $variantMaxStockLevel = null;
-
-    #[Rule('nullable|string|max:255')]
-    public ?string $variantLocation = null;
-
-    #[Rule('nullable|string|max:255')]
-    public ?string $variantBarcode = null;
-
-    #[Rule('nullable|string|max:255')]
-    public ?string $variantImageUrl = null;
-
-    public bool $variantIsActive = true;
+    // Dynamic variants array
+    public array $variants = [];
 
     public string $search = '';
 
@@ -98,6 +41,79 @@ class Products extends Component
         $this->resetForm();
         $this->showForm = true;
         $this->editingProductId = null;
+        $this->addVariant();
+    }
+
+    public function addVariant(): void
+    {
+        $this->variants[] = [
+            'unit_id' => null,
+            'units_per_package' => null,
+            'cost_price' => 0,
+            'selling_price' => 0,
+            'per_unit_price' => null,
+            'stock_quantity' => 0,
+            'min_stock_level' => 5,
+            'max_stock_level' => null,
+        ];
+    }
+
+    public function removeVariant(int $index): void
+    {
+        if (count($this->variants) > 1) {
+            unset($this->variants[$index]);
+            $this->variants = array_values($this->variants);
+        }
+    }
+
+    public function save(): void
+    {
+        $this->validate([
+            'category_id' => 'required|exists:categories,id',
+            'name' => 'required|max:255',
+            'brand' => 'nullable|string|max:255',
+            'is_active' => 'boolean',
+            'variants' => 'required|array|min:1',
+            'variants.*.unit_id' => 'required|exists:units,id',
+            'variants.*.units_per_package' => 'nullable|integer|min:1',
+            'variants.*.cost_price' => 'required|numeric|min:0',
+            'variants.*.selling_price' => 'required|numeric|min:0.01',
+            'variants.*.per_unit_price' => 'nullable|numeric|min:0',
+            'variants.*.stock_quantity' => 'nullable|integer|min:0',
+            'variants.*.min_stock_level' => 'nullable|integer|min:0',
+            'variants.*.max_stock_level' => 'nullable|integer|min:0',
+        ]);
+
+        DB::transaction(function () {
+            $product = Product::create([
+                'category_id' => $this->category_id,
+                'name' => $this->name,
+                'sku' => $this->generateSku(),
+                'brand' => $this->brand,
+                'is_active' => $this->is_active,
+            ]);
+
+            foreach ($this->variants as $variant) {
+                $perUnitPrice = $variant['units_per_package']
+                    ? ($variant['per_unit_price'] ?? $variant['selling_price'])
+                    : $variant['selling_price'];
+
+                $product->variants()->create([
+                    'unit_id' => $variant['unit_id'],
+                    'units_per_package' => $variant['units_per_package'] ?? null,
+                    'cost_price' => $variant['cost_price'],
+                    'selling_price' => $variant['selling_price'],
+                    'per_unit_price' => $perUnitPrice,
+                    'stock_quantity' => $variant['stock_quantity'] ?? 0,
+                    'min_stock_level' => $variant['min_stock_level'] ?? 5,
+                    'max_stock_level' => $variant['max_stock_level'] ?? null,
+                    'is_active' => true,
+                ]);
+            }
+        });
+
+        session()->flash('message', 'Product and variants created successfully.');
+        $this->resetForm();
     }
 
     public function edit(Product $product): void
@@ -107,131 +123,93 @@ class Products extends Component
         $this->editingProductId = $product->id;
         $this->category_id = $product->category_id;
         $this->name = $product->name;
-        $this->description = $product->description;
         $this->brand = $product->brand;
-        $this->is_taxable = $product->is_taxable;
-        $this->barcode = $product->barcode;
-        $this->image_url = $product->image_url;
-        $this->weight = $product->weight;
         $this->is_active = $product->is_active;
-    }
 
-    public function save(): void
-    {
-        $rules = [
-            'category_id' => 'required|exists:categories,id',
-            'name' => 'required|max:255',
-            'description' => 'nullable|string|max:1000',
-            'brand' => 'nullable|string|max:255',
-            'is_taxable' => 'boolean',
-            'barcode' => 'nullable|string|max:255',
-            'image_url' => 'nullable|string|max:255',
-            'weight' => 'nullable|numeric|min:0',
-            'is_active' => 'boolean',
-        ];
+        $this->variants = $product->variants->map(fn ($v) => [
+            'id' => $v->id,
+            'unit_id' => $v->unit_id,
+            'units_per_package' => $v->units_per_package,
+            'cost_price' => (float) $v->cost_price,
+            'selling_price' => (float) $v->selling_price,
+            'per_unit_price' => $v->per_unit_price ? (float) $v->per_unit_price : null,
+            'stock_quantity' => $v->stock_quantity,
+            'min_stock_level' => $v->min_stock_level,
+            'max_stock_level' => $v->max_stock_level,
+        ])->toArray();
 
-        // Variant-specific validation is handled in `saveVariant()`.
-
-        $this->validate($rules);
-
-        $data = [
-            'category_id' => $this->category_id,
-            'name' => $this->name,
-            'description' => $this->description,
-            'brand' => $this->brand,
-            'is_taxable' => $this->is_taxable,
-            'barcode' => $this->barcode,
-            'image_url' => $this->image_url,
-            'weight' => $this->weight,
-            'is_active' => $this->is_active,
-        ];
-
-        if ($this->editingProductId) {
-            $product = Product::findOrFail($this->editingProductId);
-            $product->update($data);
-
-            session()->flash('message', 'Product updated successfully.');
-            $this->resetForm();
-        } else {
-            $product = Product::create([
-                ...$data,
-                'sku' => $this->generateSku(),
-            ]);
-
-            $this->createdProductId = $product->id;
-            $this->createdProductVariants = [];
-            $this->variantUnitId = null;
-            $this->variantUnitsPerPackage = null;
-            $this->variantSellingPrice = 0;
-            $this->variantCostPrice = 0;
-            $this->variantStockQuantity = 0;
-            $this->variantMinStockLevel = 5;
-
-            session()->flash('message', 'Product created. Now add variants below.');
+        if (empty($this->variants)) {
+            $this->addVariant();
         }
-
-        $this->resetPage();
     }
 
-    public function saveVariant(): void
+    public function update(): void
     {
         $this->validate([
-            'variantUnitId' => 'required|exists:units,id',
-            'variantUnitsPerPackage' => 'nullable|integer|min:1',
-            'variantSellingPrice' => 'required|numeric|min:0',
-            'variantCostPrice' => 'required|numeric|min:0',
-            'variantStockQuantity' => 'nullable|integer|min:0',
-            'variantMinStockLevel' => 'nullable|integer|min:0',
-            'variantPackageWeight' => 'nullable|numeric|min:0',
-            'variantPromoPrice' => 'nullable|numeric|min:0',
-            'variantPromoStart' => 'nullable|date',
-            'variantPromoEnd' => 'nullable|date',
-            'variantMaxStockLevel' => 'nullable|integer|min:0',
-            'variantLocation' => 'nullable|string|max:255',
-            'variantBarcode' => 'nullable|string|max:255',
-            'variantImageUrl' => 'nullable|string|max:255',
-            'variantIsActive' => 'boolean',
+            'category_id' => 'required|exists:categories,id',
+            'name' => 'required|max:255',
+            'brand' => 'nullable|string|max:255',
+            'is_active' => 'boolean',
+            'variants' => 'required|array|min:1',
+            'variants.*.unit_id' => 'required|exists:units,id',
+            'variants.*.cost_price' => 'required|numeric|min:0',
+            'variants.*.selling_price' => 'required|numeric|min:0.01',
+            'variants.*.per_unit_price' => 'nullable|numeric|min:0',
+            'variants.*.stock_quantity' => 'nullable|integer|min:0',
+            'variants.*.min_stock_level' => 'nullable|integer|min:0',
+            'variants.*.max_stock_level' => 'nullable|integer|min:0',
         ]);
 
-        $product = Product::findOrFail($this->createdProductId);
+        $product = Product::findOrFail($this->editingProductId);
 
-        $product->variants()->create([
-            'unit_id' => $this->variantUnitId,
-            'units_per_package' => $this->variantUnitsPerPackage,
-            'package_weight' => $this->variantPackageWeight,
-            'cost_price' => $this->variantCostPrice,
-            'selling_price' => $this->variantSellingPrice,
-            'promo_price' => $this->variantPromoPrice,
-            'promo_start' => $this->variantPromoStart,
-            'promo_end' => $this->variantPromoEnd,
-            'stock_quantity' => $this->variantStockQuantity ?? 0,
-            'min_stock_level' => $this->variantMinStockLevel ?? 5,
-            'max_stock_level' => $this->variantMaxStockLevel,
-            'location' => $this->variantLocation,
-            'barcode' => $this->variantBarcode,
-            'image_url' => $this->variantImageUrl,
-            'is_active' => $this->variantIsActive,
-        ]);
+        DB::transaction(function () use ($product) {
+            $product->update([
+                'category_id' => $this->category_id,
+                'name' => $this->name,
+                'brand' => $this->brand,
+                'is_active' => $this->is_active,
+            ]);
 
-        $this->createdProductVariants = $product->variants()
-            ->with('unit')
-            ->get()
-            ->toArray();
+            $existingIds = [];
 
-        $this->variantUnitId = null;
-        $this->variantUnitsPerPackage = null;
-        $this->variantSellingPrice = 0;
-        $this->variantCostPrice = 0;
-        $this->variantStockQuantity = 0;
-        $this->variantMinStockLevel = 5;
+            foreach ($this->variants as $variantData) {
+                $perUnitPrice = ($variantData['units_per_package'] ?? null)
+                    ? ($variantData['per_unit_price'] ?? $variantData['selling_price'])
+                    : $variantData['selling_price'];
 
-        session()->flash('message', 'Variant added successfully.');
-    }
+                if (isset($variantData['id'])) {
+                    $existingIds[] = $variantData['id'];
+                    $product->variants()->where('id', $variantData['id'])->update([
+                        'unit_id' => $variantData['unit_id'],
+                        'units_per_package' => $variantData['units_per_package'] ?? null,
+                        'cost_price' => $variantData['cost_price'],
+                        'selling_price' => $variantData['selling_price'],
+                        'per_unit_price' => $perUnitPrice,
+                        'stock_quantity' => $variantData['stock_quantity'] ?? 0,
+                        'min_stock_level' => $variantData['min_stock_level'] ?? 5,
+                        'max_stock_level' => $variantData['max_stock_level'] ?? null,
+                    ]);
+                } else {
+                    $newVariant = $product->variants()->create([
+                        'unit_id' => $variantData['unit_id'],
+                        'units_per_package' => $variantData['units_per_package'] ?? null,
+                        'cost_price' => $variantData['cost_price'],
+                        'selling_price' => $variantData['selling_price'],
+                        'per_unit_price' => $perUnitPrice,
+                        'stock_quantity' => $variantData['stock_quantity'] ?? 0,
+                        'min_stock_level' => $variantData['min_stock_level'] ?? 5,
+                        'max_stock_level' => $variantData['max_stock_level'] ?? null,
+                        'is_active' => true,
+                    ]);
+                    $existingIds[] = $newVariant->id;
+                }
+            }
 
-    public function finish(): void
-    {
+            $product->variants()->whereNotIn('id', $existingIds)->delete();
+        });
+
+        session()->flash('message', 'Product updated successfully.');
         $this->resetForm();
-        $this->resetPage();
     }
 
     private function generateSku(): string
@@ -241,7 +219,7 @@ class Products extends Component
         $productPrefix = strtoupper(substr(preg_replace('/[^a-zA-Z0-9]/', '', $this->name), 0, 6));
         $baseSku = "{$categoryPrefix}-{$productPrefix}";
 
-        $count = Product::where('sku', 'like', $baseSku . '%')->count();
+        $count = Product::where('sku', 'like', $baseSku.'%')->count();
         $number = str_pad((string) ($count + 1), 3, '0', STR_PAD_LEFT);
 
         return "{$baseSku}-{$number}";
@@ -279,7 +257,6 @@ class Products extends Component
         $product->delete();
         $this->deletingProductId = null;
         session()->flash('message', 'Product deleted successfully.');
-        $this->resetPage();
     }
 
     public function cancel(): void
@@ -287,32 +264,17 @@ class Products extends Component
         $this->resetForm();
     }
 
-    public function updatedSearch(): void
-    {
-        $this->resetPage();
-    }
+    public function updatedSearch(): void {}
 
     private function resetForm(): void
     {
         $this->showForm = false;
         $this->editingProductId = null;
-        $this->createdProductId = null;
-        $this->createdProductVariants = [];
         $this->category_id = null;
         $this->name = '';
-        $this->description = null;
         $this->brand = null;
-        $this->is_taxable = true;
-        $this->variantUnitId = null;
-        $this->variantUnitsPerPackage = null;
-        $this->variantSellingPrice = 0;
-        $this->variantCostPrice = 0;
-        $this->variantStockQuantity = 0;
-        $this->variantMinStockLevel = 5;
-        $this->barcode = null;
-        $this->image_url = null;
-        $this->weight = null;
         $this->is_active = true;
+        $this->variants = [];
     }
 
     public function render()
@@ -321,11 +283,10 @@ class Products extends Component
 
         if (! empty($this->search)) {
             $productsQuery->where(function ($query) {
-                $query->where('name', 'like', '%' . $this->search . '%')
-                    ->orWhere('sku', 'like', '%' . $this->search . '%')
-                    ->orWhere('description', 'like', '%' . $this->search . '%')
+                $query->where('name', 'like', '%'.$this->search.'%')
+                    ->orWhere('sku', 'like', '%'.$this->search.'%')
                     ->orWhereHas('category', function ($q) {
-                        $q->where('name', 'like', '%' . $this->search . '%');
+                        $q->where('name', 'like', '%'.$this->search.'%');
                     });
             });
         }
@@ -335,8 +296,9 @@ class Products extends Component
         return view('livewire.inventory.products', [
             'products' => $productsQuery->orderBy('name')->take($this->perPage)->get(),
             'categories' => Category::orderBy('name')->get(),
-            'units' => Unit::sellable()->ordered()->get(),
+            'units' => Unit::ordered()->get(),
             'hasMorePages' => $totalProducts > $this->perPage,
+            'variants' => $this->variants,
         ]);
     }
 }

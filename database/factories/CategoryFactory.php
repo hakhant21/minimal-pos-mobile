@@ -18,9 +18,6 @@ class CategoryFactory extends Factory
         return [
             'name' => $name,
             'slug' => Str::slug($name),
-            'description' => fake()->sentence(),
-            'icon' => fake()->randomElement(['fa-box', 'fa-bottle', 'fa-can', 'fa-snack']),
-            'color' => fake()->hexColor(),
             'is_active' => true,
         ];
     }

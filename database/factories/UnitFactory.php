@@ -14,7 +14,6 @@ class UnitFactory extends Factory
     {
         return [
             'name' => fake()->word(),
-            'is_sellable' => true,
         ];
     }
 
@@ -22,7 +21,6 @@ class UnitFactory extends Factory
     {
         return $this->state(fn () => [
             'name' => 'Bottle',
-            'is_sellable' => true,
         ]);
     }
 
@@ -30,7 +28,6 @@ class UnitFactory extends Factory
     {
         return $this->state(fn () => [
             'name' => 'Can',
-            'is_sellable' => true,
         ]);
     }
 
@@ -38,7 +35,6 @@ class UnitFactory extends Factory
     {
         return $this->state(fn () => [
             'name' => 'Pack',
-            'is_sellable' => true,
         ]);
     }
 
@@ -46,7 +42,6 @@ class UnitFactory extends Factory
     {
         return $this->state(fn () => [
             'name' => 'Piece',
-            'is_sellable' => true,
         ]);
     }
 }

@@ -17,11 +17,8 @@ class ProductFactory extends Factory
             'category_id' => Category::factory(),
             'name' => fake()->unique()->words(2, true),
             'sku' => fake()->unique()->ean13(),
-            'barcode' => fake()->unique()->ean13(),
-            'description' => fake()->sentence(),
             'brand' => fake()->word(),
             'is_active' => true,
-            'is_taxable' => true,
         ];
     }
 }
