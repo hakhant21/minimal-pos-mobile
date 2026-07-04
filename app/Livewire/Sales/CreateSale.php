@@ -50,11 +50,6 @@ class CreateSale extends Component
         $this->sellType = 'package';
     }
 
-    public function updatedProductSearch(): void
-    {
-        $this->showProductDropdown = true;
-    }
-
     public function updatedSelectedProductId(): void
     {
         $this->selectedVariantId = null;
@@ -64,7 +59,7 @@ class CreateSale extends Component
 
     public function updatedSelectedVariantId(): void
     {
-        $this->sellType = 'package';
+        $this->sellType = 'single';
     }
 
     public function selectProduct(int $productId): void
@@ -80,6 +75,11 @@ class CreateSale extends Component
         }
 
         $this->loadProductVariants();
+    }
+
+    public function getSelectedVariantProperty(): ?array
+    {
+        return collect($this->variants)->firstWhere('id', $this->selectedVariantId);
     }
 
     public function loadProductVariants(): void

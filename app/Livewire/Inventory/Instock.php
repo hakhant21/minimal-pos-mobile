@@ -84,7 +84,7 @@ class Instock extends Component
         $productsQuery = Product::with('variants.unit', 'category')->orderBy('name');
 
         if (! empty($this->productSearch)) {
-            $productsQuery->where('name', 'like', '%' . $this->productSearch . '%');
+            $productsQuery->where('name', 'like', '%'.$this->productSearch.'%');
         }
 
         $lowStockVariants = ProductVariant::with('product.category', 'unit')

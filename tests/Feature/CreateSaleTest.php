@@ -131,7 +131,7 @@ it('merges duplicate variant quantities', function () {
         ->set('selectedVariantId', $this->variantBottle->id)
         ->set('itemQuantity', 2)
         ->call('addToCart')
-        ->assertSet('cart', fn($cart) => expect($cart)->toHaveCount(1) && true)
+        ->assertSet('cart', fn ($cart) => expect($cart)->toHaveCount(1) && true)
         ->call('selectProduct', $this->product->id)
         ->set('selectedVariantId', $this->variantBottle->id)
         ->set('itemQuantity', 3)
@@ -155,7 +155,7 @@ it('adds different variants as separate cart items', function () {
         ->set('selectedVariantId', $this->variantPack->id)
         ->set('itemQuantity', 1)
         ->call('addToCart')
-        ->assertSet('cart', fn($cart) => expect($cart)->toHaveCount(2) && true);
+        ->assertSet('cart', fn ($cart) => expect($cart)->toHaveCount(2) && true);
 });
 
 it('increases cart item quantity', function () {
@@ -186,7 +186,7 @@ it('removes cart item when decreasing quantity to zero', function () {
         ->set('selectedVariantId', $this->variantBottle->id)
         ->set('itemQuantity', 1)
         ->call('addToCart')
-        ->assertSet('cart', fn($cart) => expect($cart)->toHaveCount(1) && true)
+        ->assertSet('cart', fn ($cart) => expect($cart)->toHaveCount(1) && true)
         ->call('decreaseCartItemQuantity', 0)
         ->assertSet('cart', []);
 });
@@ -197,7 +197,7 @@ it('removes cart item', function () {
         ->set('selectedVariantId', $this->variantBottle->id)
         ->set('itemQuantity', 2)
         ->call('addToCart')
-        ->assertSet('cart', fn($cart) => expect($cart)->toHaveCount(1) && true)
+        ->assertSet('cart', fn ($cart) => expect($cart)->toHaveCount(1) && true)
         ->call('removeFromCart', 0)
         ->assertSet('cart', []);
 });
@@ -297,7 +297,7 @@ it('renders cart section after adding items', function () {
         ->call('addToCart')
         ->assertSee('Cola')
         ->assertSeeHtml('Cart (1')
-        ->assertSee('Bottles')
+        ->assertSee('Bottle')
         ->assertSeeHtml('Ks 7.50')
         ->assertSee('Complete Sale')
         ->assertSee('Total');
