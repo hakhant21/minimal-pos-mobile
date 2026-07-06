@@ -132,11 +132,13 @@ return [
     ],
 
     'android' => [
-        'gradle_jdk_path' => env('NATIVEPHP_GRADLE_PATH', '/Library/Java/JavaVirtualMachines/openjdk-17.0.19/Contents/Home'),
+        'gradle_jdk_path' => env('NATIVEPHP_GRADLE_PATH'),
         'android_sdk_path' => env('NATIVEPHP_ANDROID_SDK_LOCATION', '/Users/hak/Library/Android/sdk'),
         'emulator_path' => env('ANDROID_EMULATOR', '/Users/hak/Library/Android/sdk/emulator/emulator'),
         '7zip-location' => env('NATIVEPHP_7ZIP_LOCATION', 'C:\\Program Files\\7-Zip\\7z.exe'),
-
+        'compile_sdk' => env('NATIVEPHP_ANDROID_COMPILE_SDK', 36),
+        'min_sdk' => env('NATIVEPHP_ANDROID_MIN_SDK', 26),
+        'target_sdk' => env('NATIVEPHP_ANDROID_TARGET_SDK', 36),
         /*
         |--------------------------------------------------------------------------
         | Status Bar Style
