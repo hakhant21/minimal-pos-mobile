@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Sale;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -26,8 +27,10 @@ Route::get('/sales', function () {
     return view('pages.sales');
 })->name('sales');
 
-Route::get('/sales/detail', function () {
-    return view('pages.sales.detail');
+Route::get('/sales/{sale}', function (Sale $sale) {
+    return view('pages.sales.detail', [
+        'sale' => $sale,
+    ]);
 })->name('sales.detail');
 
 Route::get('/history', function () {
