@@ -10,13 +10,6 @@ class History extends Component
 {
     use WithPagination;
 
-    public ?int $expandedSaleId = null;
-
-    public function toggleSale(int $saleId): void
-    {
-        $this->expandedSaleId = $this->expandedSaleId === $saleId ? null : $saleId;
-    }
-
     public function render()
     {
         return view('livewire.sales.history', [

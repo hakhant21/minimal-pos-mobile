@@ -141,67 +141,26 @@
 
         <div class="divide-y divide-gray-100 dark:divide-gray-800">
             @forelse ($recentSales as $sale)
-            <div class="transition hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                <button wire:click="toggleRecentSale({{ $sale->id }})" wire:key="sale-{{ $sale->id }}-button"
-                    class="w-full group focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-inset">
-                    <div class="flex items-center justify-between px-4 py-3">
-                        <div class="flex items-center gap-3 flex-1">
-                            <div
-                                class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-xs font-bold text-gray-600 dark:bg-gray-700 dark:text-gray-300">
-                                {{ $sale->items_count }}
-                            </div>
-                            <div class="flex-1 text-left">
-                                <p class="text-sm font-medium text-gray-900 dark:text-white">Ks {{
-                                    number_format($sale->total, 2) }}</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">
-                                    {{ $sale->created_at->format('M d, h:i A') }}
-                                    <span class="ml-1 text-gray-400">• {{ $sale->invoice_number }}</span>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="shrink-0 ml-4">
-                            <svg class="h-5 w-5 text-gray-400 transition-transform duration-200 {{ in_array($sale->id, $expandedSales) ? 'rotate-180' : '' }}"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </div>
+            <a href="{{ route('sales.detail', $sale) }}"
+                class="flex items-center justify-between px-4 py-3 transition hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                <div class="flex items-center gap-3 flex-1">
+                    <div
+                        class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-xs font-bold text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+                        {{ $sale->items_count }}
                     </div>
-                </button>
-
-                @if(in_array($sale->id, $expandedSales))
-                <div wire:key="sale-{{ $sale->id }}-items"
-                    class="border-t border-gray-100 dark:border-gray-700/50 bg-gray-50/50 dark:bg-gray-900/30">
-                    <div class="divide-y divide-gray-100 dark:divide-gray-800">
-                        @forelse ($sale->items as $item)
-                        <div class="flex items-center justify-between px-4 py-3 pl-11">
-                            <div class="flex-1">
-                                <p class="text-sm font-medium text-gray-900 dark:text-white">{{
-                                    $item->variant->product->name ?? __('N/A') }}</p>
-                                <div class="flex items-center gap-2 mt-0.5">
-                                    <span class="text-xs text-gray-500 dark:text-gray-400">{{ __('Qty') }}: {{
-                                        $item->quantity }}</span>
-                                    <span class="text-xs text-gray-400">•</span>
-                                    <span class="text-xs text-gray-500 dark:text-gray-400">{{ $item->variant->unit->name
-                                        ?? __('N/A') }}</span>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-sm font-semibold text-amber-600 dark:text-amber-400">Ks {{
-                                    number_format($item->total_price, 2) }}</p>
-                                <p class="text-xs text-gray-400">Ks {{ number_format($item->unit_price, 2) }} / {{
-                                    __('Unit') }}</p>
-                            </div>
-                        </div>
-                        @empty
-                        <div class="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
-                            {{ __('No items found for this sale.') }}
-                        </div>
-                        @endforelse
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-gray-900 dark:text-white">Ks {{
+                            number_format($sale->total, 2) }}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                            {{ $sale->created_at->format('M d, h:i A') }}
+                            <span class="ml-1 text-gray-400">• {{ $sale->invoice_number }}</span>
+                        </p>
                     </div>
                 </div>
-                @endif
-            </div>
+                <svg class="h-4 w-4 shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </a>
             @empty
             <div class="px-4 py-8 text-center">
                 <svg class="mx-auto h-8 w-8 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor"

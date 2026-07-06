@@ -8,17 +8,6 @@ use Livewire\Component;
 
 class Dashboard extends Component
 {
-    public array $expandedSales = [];
-
-    public function toggleRecentSale(int $saleId): void
-    {
-        if (in_array($saleId, $this->expandedSales)) {
-            $this->expandedSales = array_values(array_diff($this->expandedSales, [$saleId]));
-        } else {
-            $this->expandedSales[] = $saleId;
-        }
-    }
-
     public function render()
     {
         $totalStock = ProductVariant::sum('stock_quantity');

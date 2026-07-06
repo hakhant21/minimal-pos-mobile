@@ -8,7 +8,7 @@
 
     @forelse ($sales as $sale)
     <x-card padding="p-0">
-        <button wire:key="sale-{{ $sale->id }}-button" wire:click="toggleSale({{ $sale->id }})"
+        <a href="{{ route('sales.detail', $sale) }}"
             class="flex w-full items-start justify-between gap-4 px-5 py-4 text-left transition hover:bg-gray-50/80 dark:hover:bg-gray-800/50">
             <div class="flex-1 min-w-0">
                 <p class="text-base font-bold text-gray-900 dark:text-white">{{ $sale->invoice_number }}</p>
@@ -29,40 +29,10 @@
                 <p class="mt-1 text-xs text-gray-400 dark:text-gray-500">{{ $sale->notes }}</p>
                 @endif
             </div>
-            <svg class="mt-1.5 h-4 w-4 shrink-0 text-gray-400 transition-transform duration-200 {{ $expandedSaleId === $sale->id ? 'rotate-180' : '' }}"
-                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            <svg class="mt-1.5 h-4 w-4 shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
-        </button>
-
-        @if ($expandedSaleId === $sale->id)
-        <div wire:key="sale-{{ $sale->id }}-items" class="border-t border-gray-100 dark:border-gray-700/50">
-            <div class="divide-y divide-gray-50 dark:divide-gray-800/50">
-                @foreach ($sale->items as $item)
-                <div
-                    class="flex items-center justify-between px-5 py-3 pl-14 transition hover:bg-gray-50/50 dark:hover:bg-gray-800/30">
-                    <div>
-                        <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $item->variant->product->name ??
-                            __('N/A') }}</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">
-                            {{ $item->quantity }} × {{ $item->variant->unit->name ?? __('N/A') }}
-                            <span class="text-gray-300 dark:text-gray-600">@</span>
-                            Ks {{ number_format($item->unit_price, 2) }}
-                        </p>
-                    </div>
-                    <span class="text-sm font-semibold text-gray-900 dark:text-white">
-                        Ks {{ number_format($item->total_price, 2) }}
-                    </span>
-                </div>
-                @endforeach
-            </div>
-            <div class="border-t border-gray-100 bg-gray-50/80 px-5 py-3 dark:border-gray-700/50 dark:bg-gray-800/50">
-                <span class="text-xs text-gray-500 dark:text-gray-400">
-                    {{ $sale->items->count() }} {{ __('items') }}
-                </span>
-            </div>
-        </div>
-        @endif
+        </a>
     </x-card>
     @empty
     <x-card padding="p-0">
