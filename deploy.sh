@@ -602,12 +602,7 @@ deploy_app() {
 
     # Package app
     print_info "Packaging app..."
-    local package_cmd="php artisan native:package android \
-        --keystore=\"$KEYSTORE_PATH\" \
-        --keystore-password=\"$KEYSTORE_PASSWORD\" \
-        --key-alias=\"$KEY_ALIAS\" \
-        --key-password=\"$KEY_PASSWORD\""
-
+    local package_cmd="php artisan native:run --build=release"
     echo -e "${YELLOW}Executing:${NC} $package_cmd"
     echo
     eval "$package_cmd"

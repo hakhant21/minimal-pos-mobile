@@ -28,6 +28,12 @@ return [
 
     'version_code' => env('NATIVEPHP_APP_VERSION_CODE', 1),
 
+    'runtime' => [
+        'mode' => env('NATIVEPHP_RUNTIME_MODE', 'persistent'),
+        'reset_instances' => true,
+        'gc_between_dispatches' => false,
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | App ID
