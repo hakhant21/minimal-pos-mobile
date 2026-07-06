@@ -16,8 +16,6 @@ class SaleDetail extends Component
 
     public function render()
     {
-        return view('livewire.sales.sale-detail', [
-            'sale' => $this->sale,
-        ]);
+        return view('livewire.sales.sale-detail');
     }
 }
