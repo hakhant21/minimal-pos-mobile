@@ -64,12 +64,14 @@ class Instock extends Component
 
         $variant = ProductVariant::findOrFail($this->variant_id);
 
+        $before = (float) $variant->stock_quantity;
+
         $variant->increment('stock_quantity', $this->quantity);
 
         // Update weighted average cost price
         if ($this->purchaseCost > 0) {
             $totalQty = $before + $this->quantity;
-            $totalCost = ((float) $variant->cost_price * $before) + ($this->purchaseCost * $this->quantity);
+            $totalCost = ($before * (float) $variant->cost_price) + ($this->purchaseCost * $this->quantity);
             $variant->update(['cost_price' => round($totalCost / $totalQty, 2)]);
         }
 
