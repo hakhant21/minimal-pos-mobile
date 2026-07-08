@@ -46,7 +46,7 @@ class ProfitLoss extends Component
                     DB::raw('COUNT(DISTINCT sale_items.id) as items_sold'),
                     DB::raw('SUM(sale_items.quantity) as total_qty'),
                     DB::raw('SUM(sale_items.total_price) as revenue'),
-                    DB::raw('SUM(sale_items.quantity * COALESCE(product_variants.cost_price, 0)) as cogs'),
+                    DB::raw('SUM(sale_items.quantity * COALESCE(sale_items.cost_price, product_variants.cost_price, 0)) as cogs'),
                 )
                 ->groupBy('products.id', 'products.name')
                 ->orderBy('revenue', 'desc')

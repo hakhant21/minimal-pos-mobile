@@ -14,13 +14,14 @@ class SaleItem extends Model
 
     protected $fillable = [
         'sale_id', 'product_variant_id', 'quantity',
-        'unit_price', 'discount', 'total_price', 'tax_amount', 'notes',
+        'unit_price', 'cost_price', 'discount', 'total_price', 'tax_amount', 'notes',
     ];
 
     protected function casts(): array
     {
         return [
             'unit_price' => 'decimal:2',
+            'cost_price' => 'decimal:2',
             'discount' => 'decimal:2',
             'total_price' => 'decimal:2',
             'tax_amount' => 'decimal:2',

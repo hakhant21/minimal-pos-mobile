@@ -23,6 +23,7 @@ class SaleItemFactory extends Factory
             'product_variant_id' => $variant->id,
             'quantity' => $quantity,
             'unit_price' => $unitPrice,
+            'cost_price' => $variant->cost_price,
             'discount' => 0,
             'total_price' => $unitPrice * $quantity,
             'tax_amount' => 0,

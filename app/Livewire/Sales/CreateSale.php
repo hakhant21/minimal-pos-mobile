@@ -255,16 +255,18 @@ class CreateSale extends Component
         ]);
 
         foreach ($this->cart as $item) {
+            $variant = ProductVariant::find($item['variant_id']);
+
             $sale->items()->create([
                 'product_variant_id' => $item['variant_id'],
                 'quantity' => $item['quantity'],
                 'unit_price' => $item['unit_price'],
+                'cost_price' => $variant?->cost_price,
                 'discount' => 0,
                 'total_price' => $item['total_price'],
                 'tax_amount' => 0,
             ]);
 
-            $variant = ProductVariant::find($item['variant_id']);
             if ($variant) {
                 $stockToDeduct = $item['sell_type'] === 'package'
                     ? $item['units_per_package'] * $item['quantity']
